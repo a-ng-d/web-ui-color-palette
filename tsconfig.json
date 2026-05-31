@@ -1,19 +1,26 @@
 {
   "compilerOptions": {
     "strict": true,
-    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["node"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2022",
     "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true,
-    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
     "isolatedModules": true,
     "skipLibCheck": true,
+    "useDefineForClassFields": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "remix/ui",
-    "noEmit": true
+    "jsxImportSource": "preact",
+    "noEmit": true,
+    "paths": {
+      "react": ["./node_modules/preact/compat/src/index.d.ts"],
+      "react/jsx-runtime": ["./node_modules/preact/jsx-runtime/src/index.d.ts"],
+      "react-dom": ["./node_modules/preact/compat/src/index.d.ts"],
+      "react-dom/*": ["./node_modules/preact/compat/src/*"]
+    }
   },
-  "exclude": ["dist"]
+  "include": ["src", "server.ts", "env.d.ts"],
+  "exclude": ["dist", "node_modules", "packages"]
 }

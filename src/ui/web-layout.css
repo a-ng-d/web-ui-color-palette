@@ -1,0 +1,78 @@
+/* ── Web-specific layout ───────────────────────────────────────────────── */
+
+/* Root container — mirrors plugin's #app wrapper */
+.web-app {
+  display: flex;
+  height: 100dvh;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Main content area — overrides plugin's main (no fixed height, scroll allowed) */
+.web-app > main {
+  flex: 1;
+  height: 100%;
+  overflow: auto;
+}
+
+/* ── Sidebar ───────────────────────────────────────────────────────────── */
+
+.web-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--size-pos-xxxsmall, 4px) 0;
+  gap: var(--size-pos-xunit, 2px);
+  /* Matches .bar.bar--vertical min-width from @unoff/ui */
+  width: var(--bar-min-height, 40px);
+  flex-shrink: 0;
+  border-right: var(--bar-border-width, 1px) solid
+    var(--bar-border-color, var(--figma-color-border-default, #e5e5e5));
+  background-color: var(--bar-background-color, var(--figma-color-bg, #fff));
+}
+
+/* ── Nav items ─────────────────────────────────────────────────────────── */
+
+.web-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-pos-large, 32px);
+  height: var(--size-pos-large, 32px);
+  border-radius: var(--size-pos-xxxsmall, 6px);
+  text-decoration: none;
+  flex-shrink: 0;
+  background: transparent;
+  transition: background 100ms ease;
+}
+
+.web-nav-item:hover {
+  background: var(--figma-color-bg-hover, rgba(0, 0, 0, 0.06));
+}
+
+.web-nav-item[aria-current='page'] {
+  background: var(--figma-color-bg-selected, rgba(24, 160, 251, 0.1));
+}
+
+/* ── Nav icons (CSS mask from @unoff/ui --icon-* vars) ─────────────────── */
+
+.web-nav-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: var(--figma-color-icon-default, #666);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transition: background-color 100ms ease;
+  /* mask-image set via inline style (dynamic icon name) */
+  pointer-events: none;
+}
+
+.web-nav-item[aria-current='page'] .web-nav-icon {
+  background-color: var(--figma-color-icon-brand, #18a0fb);
+}
