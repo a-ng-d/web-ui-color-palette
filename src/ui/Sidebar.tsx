@@ -11,7 +11,7 @@ const NAV_ITEMS: Array<{ path: string; icon: IconList; label: string }> = [
 ]
 
 export function Sidebar() {
-  const { path } = useLocation()
+  const { path, route } = useLocation()
 
   return (
     <nav class="web-sidebar" aria-label="Services">
@@ -19,18 +19,14 @@ export function Sidebar() {
         const isActive = path === href || (href === '/manage' && path === '/')
 
         return (
-          <a
+          <Button
             key={href}
-            href={href}
-            aria-current={isActive ? 'page' : undefined}
-          >
-            <Button
-              type="icon"
-              icon={icon}
-              state={isActive ? 'selected' : 'default'}
-              helper={{ label }}
-            />
-          </a>
+            type="icon"
+            icon={icon}
+            state={isActive ? 'selected' : 'default'}
+            helper={{ label }}
+            action={() => route(href)}
+          />
         )
       })}
     </nav>

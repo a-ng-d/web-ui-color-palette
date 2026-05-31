@@ -1,4 +1,5 @@
-import { lazy } from 'preact/compat'
+import { lazy, Suspense } from 'preact/compat'
+import type { ComponentType } from 'preact'
 import { Router, Route, LocationProvider } from 'preact-iso'
 import { TolgeeProvider } from '@tolgee/react'
 import { ConfigProvider } from 'ui-ui-color-palette/config'
@@ -17,12 +18,29 @@ import jaJP from 'ui-ui-color-palette/translations/ja-JP.json'
 import koKR from 'ui-ui-color-palette/translations/ko-KR.json'
 import webConfig from './data/webConfig'
 
-// Lazy-load route components for code splitting
-const ManagePage  = lazy(() => import('./pages/manage'))
-const GenPage     = lazy(() => import('./pages/gen'))
-const ExtractPage = lazy(() => import('./pages/extract'))
-const WheelPage   = lazy(() => import('./pages/wheel'))
-const ExplorePage = lazy(() => import('./pages/explore'))
+// lazyRoute wraps each lazy component in its own <Suspense> so preact-iso's
+// Router never sees the suspension. Without this, the Router's __c handler
+// marks the VNode with MODE_SUSPENDED; when url doesn't change after the
+// Promise resolves, useMemo returns a cached value and the stale VNode is
+// never committed — leaving a blank page on direct load or first navigation.
+// With <Suspense> in between, Suspense catches the Promise first, handles
+// the re-render itself, and the Router stays unaware of the lazy loading.
+function lazyRoute<T extends Record<string, unknown>>(
+  factory: () => Promise<{ default: ComponentType<T> }>
+): ComponentType<T> {
+  const Lazy = lazy(factory)
+  return (props: T) => (
+    <Suspense fallback={null}>
+      <Lazy {...props} />
+    </Suspense>
+  )
+}
+
+const ManagePage  = lazyRoute(() => import('./pages/manage'))
+const GenPage     = lazyRoute(() => import('./pages/gen'))
+const ExtractPage = lazyRoute(() => import('./pages/extract'))
+const WheelPage   = lazyRoute(() => import('./pages/wheel'))
+const ExplorePage = lazyRoute(() => import('./pages/explore'))
 
 // Tolgee initialised once at module level (survives HMR re-renders)
 const tolgee = initTolgee(
