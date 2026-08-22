@@ -2,3 +2,6 @@ node_modules/
 db/*.sqlite
 tmp/
 .DS_Store
+.env.*
+.mcp.json
+dist

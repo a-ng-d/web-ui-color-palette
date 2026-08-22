@@ -4,11 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="stylesheet" href="/tokens.css" />
+    <!--
+      Local fallback for @unoff/ui's --figma-color-* runtime tokens
+      (see public/figma-color-fallbacks.css for the full explanation).
+      Loaded before the app bundle; its selectors are deliberately
+      higher-specificity ('html[data-mode=X]') so they still win the
+      cascade over @unoff/ui's unconditional ':root{}' alias regardless
+      of load order.
+    -->
+    <link rel="stylesheet" href="/figma-color-fallbacks.css" />
     <title>UI Color Palette</title>
   </head>
   <body>
     <div id="root" style="width: 100%; height: 100%;"><!--app--></div>
+    <!--
+      Portal targets for @unoff/ui Dialog/toast components, which do
+      `document.getElementById('modal') && createPortal(...)` and
+      `document.getElementById('toast') && createPortal(...)` and just
+      silently render nothing if the element is missing (no error). See
+      figma-ui-color-palette/index.html and penpot-ui-color-palette/index.html
+      for the same pair. z-index layering (#ui < #modal < #toast) lives in
+      ui-ui-color-palette's app.css, keyed off these ids, not #root.
+    -->
+    <div id="modal"></div>
+    <div id="toast"></div>
     <script type="module" src="/src/entry-client.tsx"></script>
   </body>
 </html>

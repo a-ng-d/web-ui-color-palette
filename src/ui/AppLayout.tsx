@@ -1,20 +1,41 @@
-import type { ComponentChildren } from 'preact'
-// Plugin app styles (preview, contrast, layout resets, etc.)
-import 'ui-ui-color-palette/ui/stylesheets/app.css'
-// Web-specific layout classes
-import './web-layout.css'
-import { Sidebar } from './Sidebar'
+import { useEffect } from "preact/hooks";
+import { useLocation } from "preact-iso";
+import type { ComponentChildren } from "preact";
+import type { Service } from "ui-ui-color-palette/types";
+import "ui-ui-color-palette/ui/stylesheets/app.css";
+import "./web-layout.css";
+import { Sidebar } from "./Sidebar";
+import { useAppState } from "../data/AppStateContext";
 
 interface AppLayoutProps {
-  children?: ComponentChildren
+  children?: ComponentChildren;
+}
+
+const SERVICE_BY_PATH: Record<string, Service> = {
+  "/": "MANAGE",
+  "/manage": "MANAGE",
+  "/gen": "GEN",
+  "/extract": "EXTRACT",
+  "/wheel": "WHEEL",
+  "/explore": "EXPLORE",
+};
+
+function useServiceSync() {
+  const { path } = useLocation();
+  const { setState } = useAppState();
+
+  useEffect(() => {
+    setState({ service: SERVICE_BY_PATH[path] ?? "MANAGE" });
+  }, [path]);
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
+  useServiceSync();
+
   return (
-    // id="app" picks up :root[data-theme='figma'] #app background from app.css
     <div id="app" class="web-app">
       <Sidebar />
       <main>{children}</main>
     </div>
-  )
+  );
 }

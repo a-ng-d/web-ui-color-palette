@@ -1,22 +1,24 @@
-import { WithConfig, WithTranslation } from 'ui-ui-color-palette/ui/components'
-import { ManagePalette } from 'ui-ui-color-palette/ui/services'
-import { useAppState } from '../data/AppStateContext'
-
-// Inject config (from ConfigContext) and t (from TolgeeContext) automatically.
-// Double `as any` silences the intermediate HOC type mismatch (generic class component
-// vs. functional, resolved at runtime since both use the same Preact context).
+import { useEffect } from "preact/hooks";
+import { WithConfig, WithTranslation } from "ui-ui-color-palette/ui/components";
+import { ManagePalette } from "ui-ui-color-palette/ui/services";
+import { useAppState } from "../data/AppStateContext";
+import { resolvePaletteFromUrl } from "../data/urlPalette";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const WrappedManagePalette = WithConfig(WithTranslation(ManagePalette as any) as any) as any
+const WrappedManagePalette = WithConfig(
+  WithTranslation(ManagePalette as any) as any,
+) as any;
 
 export default function ManagePage() {
-  const { state } = useAppState()
+  const { state } = useAppState();
+  useEffect(() => {
+    if (!window.location.search) return;
 
-  return (
-    <WrappedManagePalette
-      {...state}
-      // appData mirrors the App-level state that ManagePalette uses for
-      // modal context, onGoingStep, etc. Partial for now — expanded in Palier 2b.
-      appData={state}
-    />
-  )
+    resolvePaletteFromUrl(window.location.search)
+      .then(() => {
+        window.history.replaceState({}, "", window.location.pathname);
+      })
+      .catch((error) => console.error("[manage] Deep link failed:", error));
+  }, []);
+
+  return <WrappedManagePalette {...state} appData={state} />;
 }

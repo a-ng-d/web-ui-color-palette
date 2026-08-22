@@ -1,95 +1,189 @@
-/**
- * Web platform configuration.
- * Mirrors the structure of ui-ui-color-palette/src/global.config.ts
- * for the 'web' platform (no __PLATFORM__ define required at runtime).
- *
- * TODO Palier 3: add 'web' to Platform and Editor union types in the plugin.
- */
-import type { Config } from 'ui-ui-color-palette/types'
+import type { Config } from "ui-ui-color-palette/types";
+import { doSpecificMode } from "ui-ui-color-palette/stores";
+
+const webInactiveFeatures = [
+  "LOCAL_PALETTES_PAGE",
+  "IMPORTS_CANVAS",
+  "DOCUMENT_CREATE",
+  "DOCUMENT_PUSH_UPDATES",
+  "DOCUMENT_PALETTE",
+  "DOCUMENT_PALETTE_PROPERTIES",
+  "DOCUMENT_SHEET",
+  "SYNC_LOCAL_STYLES",
+  "SYNC_LOCAL_VARIABLES",
+  "SYNC_LOCAL_TOKENS",
+  "USER_PREFERENCES_SYNC_DEEP_STYLES",
+  "USER_PREFERENCES_SYNC_DEEP_VARIABLES",
+  "USER_PREFERENCES_SYNC_DEEP_TOKENS",
+  "RESIZE_UI",
+];
+
+const webProFeatures = [
+  "CREATE_PALETTE",
+  "PREVIEW_LOCK_SOURCE_COLORS",
+  "PREVIEW_SCORES_WCAG_INTERVAL",
+  "PREVIEW_SCORES_APCA_INTERVAL",
+  "PREVIEW_FILTER_PASS",
+  "PREVIEW_FILTER_FAIL",
+  "VIEWS_PALETTE",
+  "VIEWS_PALETTE_WITH_PROPERTIES",
+  "VIEWS_SHEET",
+  "IMPORTS_COOLORS_ADD",
+  "IMPORTS_REALTIME_COLORS_ADD",
+  "GEN_REQUEST",
+  "EXTRACT_UPLOAD",
+  "WHEEL_BASE",
+  "PRESETS_MATERIAL",
+  "PRESETS_MATERIAL_3",
+  "PRESETS_TAILWIND",
+  "PRESETS_RADIX",
+  "PRESETS_UNTITLED_UI",
+  "PRESETS_SPECTRUM",
+  "PRESETS_SPECTRUM_NEUTRAL",
+  "PRESETS_ADS",
+  "PRESETS_ADS_NEUTRAL",
+  "PRESETS_CARBON",
+  "PRESETS_BASE",
+  "PRESETS_FLUENT",
+  "PRESETS_POLARIS",
+  "PRESETS_CUSTOM_ADD",
+  "SCALE_CONTRAST_RATIO",
+  "SCALE_CHROMA",
+  "SCALE_HUE",
+  "THEMES",
+  "THEMES_NAME",
+  "THEMES_PARAMS",
+  "THEMES_DESCRIPTION",
+  "COLORS",
+  "COLORS_HUE_SHIFTING",
+  "COLORS_CHROMA_SHIFTING",
+  "COLORS_ALPHA",
+  "COLORS_BACKGROUND_COLOR",
+  "SETTINGS_COLOR_SPACE_OKLCH",
+  "SETTINGS_COLOR_SPACE_LAB",
+  "SETTINGS_COLOR_SPACE_OKLAB",
+  "SETTINGS_COLOR_SPACE_HSV",
+  "SETTINGS_COLOR_SPACE_HSLUV",
+  "SETTINGS_COLOR_SPACE_CMYK",
+  "SETTINGS_VISION_SIMULATION_MODE_PROTANOPIA",
+  "SETTINGS_VISION_SIMULATION_MODE_DEUTERANOMALY",
+  "SETTINGS_VISION_SIMULATION_MODE_DEUTERANOPIA",
+  "SETTINGS_VISION_SIMULATION_MODE_TRITANOMALY",
+  "SETTINGS_VISION_SIMULATION_MODE_TRITANOPIA",
+  "SETTINGS_VISION_SIMULATION_MODE_ACHROMATOMALY",
+  "SETTINGS_VISION_SIMULATION_MODE_ACHROMATOPSIA",
+  "SETTINGS_ALGORITHM_V1",
+  "SETTINGS_ALGORITHM_V2",
+  "SETTINGS_TEXT_COLORS_THEME",
+  "EXPORT_STYLESHEET_SCSS",
+  "EXPORT_STYLESHEET_LESS",
+  "EXPORT_TAILWIND_V3",
+  "EXPORT_TAILWIND_V4",
+  "EXPORT_APPLE_SWIFTUI",
+  "EXPORT_APPLE_UIKIT",
+  "EXPORT_ANDROID_COMPOSE",
+  "EXPORT_ANDROID_XML",
+  "EXPORT_CSV",
+  "REPORT",
+  "HELP_EMAIL",
+];
 
 const webConfig: Config = {
   limits: {
-    pageSize: 0,
+    pageSize: 20,
     width: 500,
     height: 600,
     minWidth: 280,
     minHeight: 400,
     sourceColors: 5,
     customStops: 8,
+    colorThemes: 2,
   },
   env: {
-    platform: 'figma' as const, // TODO Palier 3 — add 'web' to Platform union
-    editor: 'figma' as const,   // TODO Palier 3 — add 'web' to Editor union
-    ui: 'figma' as const,
-    colorMode: 'figma-light' as const,
+    platform: "figma" as const,
+    editor: "figma" as const,
+    ui: "figma" as const,
+    colorMode: "figma-light" as const,
     isDev: import.meta.env.DEV,
-    isMixpanelEnabled: import.meta.env.VITE_MIXPANEL_ENABLED === 'true',
-    isSentryEnabled: import.meta.env.VITE_SENTRY_ENABLED === 'true',
-    isSupabaseEnabled: import.meta.env.VITE_SUPABASE_ENABLED === 'true',
-    isMistralAiEnabled: import.meta.env.VITE_MISTRAL_AI_ENABLED === 'true',
-    isNotionEnabled: import.meta.env.VITE_NOTION_ENABLED === 'true',
-    isPolarEnabled: import.meta.env.VITE_POLAR_ENABLED === 'true',
-    announcementsDbId: import.meta.env.VITE_NOTION_ANNOUNCEMENTS_ID ?? '',
-    onboardingDbId: import.meta.env.VITE_NOTION_ONBOARDING_ID ?? '',
-    pluginId: '',
+    isEmbed:
+      typeof window !== "undefined" &&
+      ["1", "true"].includes(
+        (
+          new URLSearchParams(window.location.search).get("embed") ?? ""
+        ).toLowerCase(),
+      ),
+    isMixpanelEnabled: import.meta.env.VITE_MIXPANEL_ENABLED === "true",
+    isSentryEnabled: import.meta.env.VITE_SENTRY_ENABLED === "true",
+    isSupabaseEnabled: import.meta.env.VITE_SUPABASE_ENABLED === "true",
+    isMistralAiEnabled: import.meta.env.VITE_MISTRAL_AI_ENABLED === "true",
+    isNotionEnabled: import.meta.env.VITE_NOTION_ENABLED === "true",
+    isPolarEnabled: import.meta.env.VITE_POLAR_ENABLED === "true",
+    announcementsDbId: import.meta.env.VITE_NOTION_ANNOUNCEMENTS_ID ?? "",
+    onboardingDbId: import.meta.env.VITE_NOTION_ONBOARDING_ID ?? "",
+    pluginId: "",
   },
   plan: {
-    isProEnabled: import.meta.env.VITE_PRO_ENABLED === 'true',
-    isTrialEnabled: import.meta.env.VITE_TRIAL_ENABLED === 'true',
-    isCreditsEnabled: import.meta.env.VITE_CREDITS_ENABLED === 'true',
+    isProEnabled: import.meta.env.VITE_PRO_ENABLED === "true",
+    isTrialEnabled: import.meta.env.VITE_TRIAL_ENABLED === "true",
+    isCreditsEnabled: import.meta.env.VITE_CREDITS_ENABLED === "true",
     trialTime: 72,
     creditsLimit: 50,
     creditsRenewalPeriodDays: 30,
+    creditsRenewalPeriodHours: 720,
+    storeProWeekId: "20d1df96-8052-47de-bf62-36b412c35885",
+    storeProMonthId: "5f0502a5-9708-459d-b002-495e2860c23a",
+    storeProYearId: "66a55061-29ff-4c52-8ce0-0661ab12890e",
+    storeProLifetimeId: "ae8ecdd5-badd-42d1-98fc-91f6ffdc77a6",
   },
   dbs: {
-    palettesDbViewName: import.meta.env.VITE_DBS_PALETTES_VIEW ?? '',
-    palettesDbTableName: import.meta.env.VITE_DBS_PALETTES_TABLE ?? '',
-    starredPalettesDbTableName: import.meta.env.VITE_DBS_STARRED_PALETTES_TABLE ?? '',
+    palettesDbViewName: import.meta.env.VITE_DBS_PALETTES_VIEW ?? "",
+    palettesDbTableName: import.meta.env.VITE_DBS_PALETTES_TABLE ?? "",
+    starredPalettesDbTableName:
+      import.meta.env.VITE_DBS_STARRED_PALETTES_TABLE ?? "",
   },
   urls: {
-    databaseUrl: import.meta.env.VITE_SUPABASE_URL ?? '',
-    authWorkerUrl: import.meta.env.VITE_AUTH_WORKER_URL ?? '',
-    announcementsWorkerUrl: import.meta.env.VITE_ANNOUNCEMENTS_WORKER_URL ?? '',
-    corsWorkerUrl: import.meta.env.VITE_CORS_WORKER_URL ?? '',
-    storeApiUrl: import.meta.env.VITE_LEMONSQUEEZY_URL ?? '',
-    uiUrl: import.meta.env.VITE_UI_URL ?? '',
-    authUrl: import.meta.env.VITE_AUTH_URL ?? '',
-    platformUrl: '*',
-    documentationUrl: '',
-    repositoryUrl: '',
-    supportEmail: '',
-    communityUrl: '',
-    feedbackUrl: '',
-    trialFeedbackUrl: '',
-    requestsUrl: '',
-    networkUrl: '',
-    authorUrl: '',
-    licenseUrl: '',
-    privacyUrl: '',
-    vsCodeFigmaPluginUrl: '',
-    isbUrl: '',
-    uicpUrl: '',
-    storeManagementUrl: '',
-    storeProWeekUrl: '',
-    storeProMonthUrl: '',
-    storeProYearUrl: '',
-    storeProLifetimeUrl: '',
-    storeUltimateRequestUrl: '',
-    howToUseUrl: '',
+    databaseUrl: import.meta.env.VITE_SUPABASE_URL ?? "",
+    authWorkerUrl: import.meta.env.VITE_AUTH_WORKER_URL ?? "",
+    announcementsWorkerUrl: import.meta.env.VITE_ANNOUNCEMENTS_WORKER_URL ?? "",
+    corsWorkerUrl: import.meta.env.VITE_CORS_WORKER_URL ?? "",
+    storeApiUrl: import.meta.env.VITE_LEMONSQUEEZY_URL ?? "",
+    uiUrl: import.meta.env.VITE_UI_URL ?? "",
+    authUrl: import.meta.env.VITE_AUTH_URL ?? "",
+    platformUrl: typeof window !== "undefined" ? window.location.origin : "*",
+    documentationUrl: "https://uicp.ylb.lt/docs",
+    repositoryUrl: "https://uicp.ylb.lt/repository",
+    communityUrl: "https://uicp.ylb.lt/community",
+    supportEmail: "https://uicp.ylb.lt/support",
+    feedbackUrl:
+      "https://angd.notion.site/ebd/13df8c62fd868018989de53f17ad6df3",
+    trialFeedbackUrl: "https://uicp.ylb.lt/feedback-trial",
+    requestsUrl: "https://uicp.ylb.lt/ideas",
+    networkUrl: "https://uicp.ylb.lt/network",
+    authorUrl: "https://uicp.ylb.lt/author",
+    licenseUrl: "https://uicp.ylb.lt/license",
+    privacyUrl: "https://uicp.ylb.lt/privacy",
+    vsCodeFigmaPluginUrl:
+      "https://marketplace.visualstudio.com/items?itemName=figma.figma-vscode-extension",
+    isbUrl: "https://isb.ylb.lt/website",
+    uicpUrl: "https://uicp.ylb.lt/website",
+    storeUrl: "https://uicp.ylb.lt/store",
+    storeManagementUrl: "https://uicp.ylb.lt/store-management",
+    storeUltimateRequestUrl: "https://uicp.ylb.lt/ultimate-request",
+    howToUseUrl: "https://uicp.ylb.lt/how-to-use-figma",
   },
   versions: {
-    userConsentVersion: '2024.01',
-    trialVersion: '2024.04',
-    algorithmVersion: 'v3',
-    paletteVersion: '2025.06',
-    pluginVersion: import.meta.env.VITE_APP_VERSION ?? '0.0.0',
-    creditsVersion: '2026.05',
+    userConsentVersion: "2024.01",
+    trialVersion: "2024.04",
+    algorithmVersion: "v3",
+    paletteVersion: "2025.06",
+    pluginVersion: import.meta.env.VITE_APP_VERSION ?? "0.0.0",
+    creditsVersion: "2026.05",
   },
-  // Web platform: no canvas sync features. Populated in Palier 3 with doSpecificMode().
-  features: [],
-  lang: (typeof navigator !== 'undefined'
-    ? (navigator.language?.split('-')[0] as Config['lang'])
-    : 'en-US') ?? 'en-US',
+  features: doSpecificMode(webInactiveFeatures, webProFeatures, []),
+  lang:
+    (typeof navigator !== "undefined"
+      ? (navigator.language?.split("-")[0] as Config["lang"])
+      : "en-US") ?? "en-US",
   fees: {
     colourLoversImport: 25,
     coolorsImport: 25,
@@ -106,6 +200,19 @@ const webConfig: Config = {
     localVariablesSync: 300,
     localTokensSync: 300,
   },
-}
+};
 
-export default webConfig
+const limitsMapping: { [key: string]: keyof typeof webConfig.limits } = {
+  COLORS_ADD: "sourceColors",
+  THEMES_ADD: "colorThemes",
+  PRESETS_CUSTOM_ADD: "customStops",
+  LOCAL_PALETTES: "localPalettes",
+};
+
+webConfig.features.forEach((feature) => {
+  const limitKey = limitsMapping[feature.name];
+  if (limitKey && webConfig.limits[limitKey] !== undefined)
+    feature.limit = webConfig.limits[limitKey];
+});
+
+export default webConfig;
