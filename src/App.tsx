@@ -9,7 +9,6 @@ import { AppLayout } from './ui/AppLayout'
 import { AppStateProvider } from './data/AppStateContext'
 import { WebBridgeProvider } from "./data/bridge/WebBridgeProvider";
 
-// Translation assets (imported once at module level)
 import enUS from 'ui-ui-color-palette/translations/en-US.json'
 import frFR from 'ui-ui-color-palette/translations/fr-FR.json'
 import ptBR from 'ui-ui-color-palette/translations/pt-BR.json'

@@ -1,4 +1,4 @@
-/* ── Web-specific layout ───────────────────────────────────────────────── */
+/* Web-specific layout */
 
 .web-app {
   display: flex;
@@ -14,7 +14,7 @@
   overflow: auto;
 }
 
-/* ── Sidebar ───────────────────────────────────────────────────────────── */
+/* Sidebar */
 
 .web-sidebar {
   display: flex;
@@ -67,7 +67,7 @@
   }
 }
 
-/* ── Manage page ───────────────────────────────────────────────────────── */
+/* Manage page */
 
 .web-manage-page {
   position: relative;

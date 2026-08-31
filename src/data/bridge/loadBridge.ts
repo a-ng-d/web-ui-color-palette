@@ -24,7 +24,7 @@ import updateThemes from "./updates/updateThemes";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleBridgeMessage = async (path: any) => {
   const actions: Record<string, () => void | Promise<void>> = {
-    // ── Initialisation ────────────────────────────────────────────────────
+    // Initialisation
     LOAD_DATA: () => {
       dispatch("CHECK_USER_AUTHENTICATION", {
         id: "",
@@ -46,11 +46,11 @@ const handleBridgeMessage = async (path: any) => {
         .then(() => checkUserLicense());
     },
 
-    // ── Announcements ─────────────────────────────────────────────────────
+    // Announcements
     CHECK_ANNOUNCEMENTS_STATUS: () =>
       checkAnnouncementsStatus(path.data.version),
 
-    // ── Updates ───────────────────────────────────────────────────────────
+    // Updates
     UPDATE_SCALE: () =>
       updateScale(path).catch((error) =>
         dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
@@ -79,7 +79,7 @@ const handleBridgeMessage = async (path: any) => {
       window.localStorage.setItem("user_language", path.data.lang);
     },
 
-    // ── Creations ─────────────────────────────────────────────────────────
+    // Creations
     CREATE_PALETTE: () =>
       createPalette(path)
         .then((id) => navigate(`/manage?id=${id}`))
@@ -99,7 +99,7 @@ const handleBridgeMessage = async (path: any) => {
         )
         .finally(() => dispatch("STOP_LOADER")),
 
-    // ── Canvas sync — no-op on web ─────────────────────────────────────────
+    // Canvas sync — no-op on web
     SYNC_LOCAL_STYLES: () => {
       dispatch("STOP_LOADER");
       dispatch("POST_MESSAGE", {
@@ -130,7 +130,7 @@ const handleBridgeMessage = async (path: any) => {
       console.log("[WebBridge] UPDATE_DOCUMENT — no-op on web", path);
     },
 
-    // ── KV storage ────────────────────────────────────────────────────────
+    // KV storage
     SET_ITEMS: () =>
       path.items.forEach((item: { key: string; value: unknown }) => {
         if (typeof item.value === "object")
@@ -153,19 +153,19 @@ const handleBridgeMessage = async (path: any) => {
         window.localStorage.removeItem(item),
       ),
 
-    // ── Notifications ─────────────────────────────────────────────────────
+    // Notifications
     POST_MESSAGE: () =>
       dispatch("POST_MESSAGE", {
         type: path.data.type,
         message: path.data.message,
       }),
 
-    // ── Navigation ────────────────────────────────────────────────────────
+    // Navigation
     OPEN_IN_BROWSER: () => {
       window.open(path.data.url, "_blank");
     },
 
-    // ── Palette CRUD ──────────────────────────────────────────────────────
+    // Palette CRUD
     GET_PALETTES: () => getPalettesOnCurrentPage(),
     JUMP_TO_PALETTE: () =>
       jumpToPalette(path.id).catch((error) =>
@@ -194,7 +194,7 @@ const handleBridgeMessage = async (path: any) => {
         dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
       ),
 
-    // ── Plan / trial / pro ────────────────────────────────────────────────
+    // Plan / trial / pro
     ENABLE_TRIAL: () => {
       enableTrial(path.data.trialTime, path.data.trialVersion).then(() =>
         checkTrialStatus(),
