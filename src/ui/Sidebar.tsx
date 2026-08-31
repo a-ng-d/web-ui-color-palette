@@ -1,46 +1,64 @@
-import { useLocation } from 'preact-iso'
-import { Button } from '@unoff/ui'
-import type { IconList } from '@unoff/ui'
+import { useLocation } from "preact-iso";
+import { Button, Tabs } from "@unoff/ui";
+import type { IconList } from "@unoff/ui";
 import { WithConfig, WithTranslation } from "ui-ui-color-palette/ui/components";
 import { Shortcuts } from "ui-ui-color-palette/ui/modules";
 import { useAppState } from "../data/AppStateContext";
+import { useCompactLayout } from "./useCompactLayout";
 
 const NAV_ITEMS: Array<{ path: string; icon: IconList; label: string }> = [
-  { path: '/manage',  icon: 'colors',    label: 'Manage'   },
-  { path: '/gen',     icon: 'ai',        label: 'Generate' },
-  { path: '/extract', icon: 'image',     label: 'Extract'  },
-  { path: '/wheel',   icon: 'list-tile', label: 'Wheel'    },
-  { path: '/explore', icon: 'explore',   label: 'Explore'  },
-]
+  { path: "/manage", icon: "colors", label: "Manage" },
+  { path: "/gen", icon: "ai", label: "Generate" },
+  { path: "/extract", icon: "image", label: "Extract" },
+  { path: "/wheel", icon: "list-tile", label: "Wheel" },
+  { path: "/explore", icon: "explore", label: "Explore" },
+];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const WrappedShortcuts = WithConfig(
   WithTranslation(Shortcuts as any) as any,
-) as any
-const noop = () => undefined
+) as any;
+
+const noop = () => undefined;
 
 export function Sidebar() {
-  const { path, route } = useLocation()
+  const { path, route } = useLocation();
   const { state, signIn, signOut } = useAppState();
+  const isCompact = useCompactLayout();
+
+  const activeTab = path === "/" ? "/manage" : path;
 
   return (
     <nav class="web-sidebar" aria-label="Services">
       <div class="web-sidebar__nav">
-        {NAV_ITEMS.map(({ path: href, icon, label }) => {
-          const isActive =
-            path === href || (href === "/manage" && path === "/");
-
-          return (
+        {isCompact ? (
+          NAV_ITEMS.map(({ path: href, icon, label }) => (
             <Button
               key={href}
               type="icon"
               icon={icon}
-              state={isActive ? "selected" : "default"}
+              state={href === activeTab ? "selected" : "default"}
               helper={{ label }}
               action={() => route(href)}
             />
-          );
-        })}
+          ))
+        ) : (
+          <Tabs
+            direction="VERTICAL"
+            active={activeTab}
+            tabs={NAV_ITEMS.map(({ path: href, icon, label }) => ({
+              id: href,
+              label,
+              icon: { type: "PICTO", name: icon },
+              isUpdated: false,
+            }))}
+            action={(event: Event) => {
+              const href = (event.currentTarget as HTMLElement | null)?.dataset
+                .feature;
+              if (href) route(href);
+            }}
+          />
+        )}
       </div>
       <div class="web-sidebar__shortcuts">
         <WrappedShortcuts
