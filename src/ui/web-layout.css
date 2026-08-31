@@ -32,6 +32,23 @@
   background-color: var(--bar-background-color, var(--figma-color-bg, #fff));
 }
 
+/* Tool-switcher icons — top section */
+.web-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-pos-xunit, 2px);
+}
+
+/* Docs / user menu / help menu (<Shortcuts orientation="VERTICAL" />) —
+   pinned to the bottom of the sidebar, second section of the same bar. */
+.web-sidebar__shortcuts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: auto;
+}
+
 /* ── Nav items ─────────────────────────────────────────────────────────── */
 
 .web-nav-item {
@@ -75,4 +92,25 @@
 
 .web-nav-item[aria-current='page'] .web-nav-icon {
   background-color: var(--figma-color-icon-brand, #18a0fb);
+}
+
+/* ── Manage page ───────────────────────────────────────────────────────── */
+
+.web-manage-page {
+  position: relative;
+  height: 100%;
+}
+.web-access-denied {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--size-pos-xsmall, 16px);
+  background-color: var(--figma-color-bg, #fff);
+}
+
+.web-access-denied > * {
+  max-width: 480px;
 }

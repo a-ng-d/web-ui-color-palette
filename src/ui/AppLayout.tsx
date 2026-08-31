@@ -5,6 +5,7 @@ import type { Service } from "ui-ui-color-palette/types";
 import "ui-ui-color-palette/ui/stylesheets/app.css";
 import "./web-layout.css";
 import { Sidebar } from "./Sidebar";
+import { NotificationHost } from "./NotificationHost";
 import { useAppState } from "../data/AppStateContext";
 
 interface AppLayoutProps {
@@ -36,6 +37,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div id="app" class="web-app">
       <Sidebar />
       <main>{children}</main>
+      <NotificationHost />
     </div>
   );
 }

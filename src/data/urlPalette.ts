@@ -1,106 +1,87 @@
-import chroma from "chroma-js";
-import { uid } from "uid";
 import type { ColorConfiguration } from "@yelbolt/engine-ui-color-palette";
-import { makeDefaultShift } from "@yelbolt/engine-ui-color-palette";
 import { getSupabase } from "ui-ui-color-palette/external/auth";
-import { getPresets, getDefaultPreset } from "ui-ui-color-palette/stores";
-import { doScale } from "@unoff/utils";
 import { getPalette } from "./bridge/db";
 import getPalettesOnCurrentPage from "./bridge/gets/getPalettesOnCurrentPage";
 import jumpToPalette from "./bridge/gets/jumpToPalette";
-import createPalette from "./bridge/creations/createPalette";
 import createPaletteFromRemote from "./bridge/creations/createPaletteFromRemote";
+import createPaletteFromLink, {
+  type SharedPaletteData,
+} from "./bridge/creations/createPaletteFromLink";
 import { dispatch, t } from "./bridge/context";
 import webConfig from "./webConfig";
 
-const parseColors = (raw: string): Array<{ hex: string }> =>
-  raw
-    .split(",")
-    .map((hex) => hex.trim())
-    .filter((hex) => chroma.valid(hex.startsWith("#") ? hex : `#${hex}`))
-    .slice(0, webConfig.limits.sourceColors ?? 5)
-    .map((hex) => ({ hex: hex.startsWith("#") ? hex : `#${hex}` }));
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type RemotePaletteRow = any;
 
-const fetchRemotePalette = async (id: string) => {
+type RemoteFetchResult =
+  | { status: "allowed"; row: RemotePaletteRow }
+  | { status: "blocked" }
+  | { status: "not-found" };
+
+const fetchRemotePalette = async (
+  id: string,
+  currentUserId: string,
+): Promise<RemoteFetchResult> => {
   const supabase = getSupabase();
-  if (!supabase) return null;
+  if (!supabase) return { status: "not-found" };
 
   const { data, error } = await supabase
     .from(webConfig.dbs.palettesDbViewName)
     .select("*")
     .eq("palette_id", id);
 
-  if (error || !data || data.length === 0) return null;
-  return data[0];
+  if (error || !data || data.length === 0) return { status: "not-found" };
+
+  const row = data[0];
+
+  if (row.is_shared === true) return { status: "allowed", row };
+
+  const isOwner = Boolean(currentUserId) && row.creator_id === currentUserId;
+  if (isOwner) return { status: "allowed", row };
+
+  return { status: "blocked" };
 };
 
-const buildFromParams = async (
-  id: string | null,
-  colorsParam: string,
-  nameParam: string | null,
-  presetParam: string | null,
-) => {
-  const hexes = parseColors(colorsParam);
-  if (hexes.length === 0) return false;
+export type PaletteUrlResolution =
+  | "resolved"
+  | "blocked"
+  | "not-found"
+  | "no-op";
 
-  const preset =
-    getPresets(t).find((p) => p.id === (presetParam ?? "").toUpperCase()) ??
-    getDefaultPreset(t);
-
-  const sourceColors = hexes.map(({ hex }, index) => {
-    const gl = chroma(hex).gl();
-    return {
-      name: `Color ${index + 1}`,
-      rgb: { r: gl[0], g: gl[1], b: gl[2] },
-      source: "DEFAULT" as const,
-      id: uid(),
-      isRemovable: true,
-    };
-  });
-
-  await createPalette({
-    data: {
-      id: id ?? undefined,
-      sourceColors,
-      exchange: {
-        name: nameParam ?? t("settings.global.name.default"),
-        description: "",
-        preset,
-        scale: doScale(preset.stops, preset.min, preset.max, preset.easing),
-        shift: {
-          chroma: makeDefaultShift("CHROMA"),
-          hue: makeDefaultShift("HUE"),
-        },
-        areSourceColorsLocked: false,
-        colorSpace: "LCH",
-        visionSimulationMode: "NONE",
-        textColorsTheme: { lightColor: "#FFFFFF", darkColor: "#000000" },
-        algorithmVersion: webConfig.versions.algorithmVersion,
-      },
-    },
-  });
-
-  return true;
-};
-
-export const resolvePaletteFromUrl = async (search: string): Promise<void> => {
+export const resolvePaletteFromUrl = async (
+  search: string,
+  currentUserId: string = "",
+): Promise<PaletteUrlResolution> => {
   const params = new URLSearchParams(search);
   const id = params.get("id");
-  const colorsParam = params.get("colors");
-  const nameParam = params.get("name");
-  const presetParam = params.get("preset");
+  const dataParam = params.get("data");
 
-  if (!id && !colorsParam) return;
+  if (!id && !dataParam) return "no-op";
 
   if (id) {
     const local = await getPalette(id);
     if (local) {
       await jumpToPalette(id);
-      return;
+      return "resolved";
     }
+  }
 
-    const remote = await fetchRemotePalette(id);
-    if (remote) {
+  if (dataParam) {
+    try {
+      const payload = JSON.parse(dataParam) as SharedPaletteData;
+      await createPaletteFromLink(payload);
+      await getPalettesOnCurrentPage();
+      return "resolved";
+    } catch (error) {
+      console.error("[urlPalette] Malformed data param:", error);
+    }
+  }
+
+  if (id) {
+    const result = await fetchRemotePalette(id, currentUserId);
+
+    if (result.status === "allowed") {
+      const remote = result.row;
       await createPaletteFromRemote({
         data: {
           base: {
@@ -120,7 +101,6 @@ export const resolvePaletteFromUrl = async (search: string): Promise<void> => {
               createdAt: remote.created_at,
               updatedAt: remote.updated_at,
               publishedAt: remote.published_at,
-              // overwritten internally by createPaletteFromRemote with "now"
               openedAt: "",
             },
             publicationStatus: {
@@ -136,26 +116,15 @@ export const resolvePaletteFromUrl = async (search: string): Promise<void> => {
         },
       });
       await getPalettesOnCurrentPage();
-      return;
+      return "resolved";
     }
+
+    if (result.status === "blocked") return "blocked";
   }
 
-  if (colorsParam) {
-    const built = await buildFromParams(
-      id,
-      colorsParam,
-      nameParam,
-      presetParam,
-    );
-    if (built) {
-      await getPalettesOnCurrentPage();
-      return;
-    }
-  }
-
-  if (id)
-    dispatch("POST_MESSAGE", {
-      type: "ERROR",
-      message: t("error.unfoundPalette"),
-    });
+  dispatch("POST_MESSAGE", {
+    type: "ERROR",
+    message: t("error.unfoundPalette"),
+  });
+  return "not-found";
 };

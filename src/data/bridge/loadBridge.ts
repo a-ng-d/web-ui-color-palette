@@ -14,6 +14,7 @@ import deletePalette from "./deletions/deletePalette";
 import getPalettesOnCurrentPage from "./gets/getPalettesOnCurrentPage";
 import jumpToPalette from "./gets/jumpToPalette";
 import enableTrial from "./plans/enableTrial";
+import copyShareLink from "../shareLink";
 import updateColors from "./updates/updateColors";
 import updatePalette from "./updates/updatePalette";
 import updateScale from "./updates/updateScale";
@@ -188,6 +189,10 @@ const handleBridgeMessage = async (path: any) => {
         .catch((error) =>
           dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
         ),
+    COPY_SHARE_LINK: () =>
+      copyShareLink(path.id).catch((error) =>
+        dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
+      ),
 
     // ── Plan / trial / pro ────────────────────────────────────────────────
     ENABLE_TRIAL: () => {
