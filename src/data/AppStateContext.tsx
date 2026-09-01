@@ -4,7 +4,6 @@ import type { ComponentChildren } from 'preact'
 import type { BaseProps, PlanStatus, Service, Editor } from 'ui-ui-color-palette/types'
 import { getSupabase, fetchUserEntitlements } from 'ui-ui-color-palette/external/auth'
 import { restoreSession, signInWithOAuth, signOutWeb } from "./webAuth";
-import type { OAuthProvider } from "./webAuth";
 
 export type WebAppState = Pick<
   BaseProps,
@@ -40,14 +39,14 @@ const defaultAppState: WebAppState = {
   trialRemainingTime: 72,
   creditsCount: 0,
   creditsRenewalDate: 0,
-  editor: "figma" as Editor, // TODO — replace with 'web' once the type union includes it
+  editor: "web" as Editor,
   documentWidth: typeof window !== "undefined" ? window.innerWidth : 1280,
 };
 
 interface AppStateContextType {
   state: WebAppState;
   setState: (partial: Partial<WebAppState>) => void;
-  signIn: (provider?: OAuthProvider) => Promise<void>;
+  signIn: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -128,8 +127,7 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
     return () => subscription?.subscription?.unsubscribe();
   }, [])
 
-  const signIn = async (provider: OAuthProvider = "google") =>
-    signInWithOAuth(provider);
+  const signIn = async () => signInWithOAuth();
 
   const signOut = async () => signOutWeb();
 

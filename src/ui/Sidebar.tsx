@@ -66,7 +66,7 @@ export function Sidebar() {
           isAccountSubscribed={false}
           announcements={{ version: "", status: "NO_ANNOUNCEMENTS" }}
           orientation="VERTICAL"
-          onSignIn={() => signIn("google")}
+          onSignIn={signIn}
           onSignOut={signOut}
           onReOpenAnnouncements={noop}
           onReOpenOnboarding={noop}

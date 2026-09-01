@@ -1,30 +1,23 @@
-import { getSupabase } from "ui-ui-color-palette/external/auth";
+import {
+  getSupabase,
+  signIn as legacySignIn,
+  signOut as legacySignOut,
+} from "ui-ui-color-palette/external/auth";
+import webConfig from "./webConfig";
 
-export type OAuthProvider = "google" | "github" | "figma";
+const authParams = () => ({
+  authWorkerUrl: webConfig.urls.authWorkerUrl,
+  authUrl: webConfig.urls.authUrl,
+  platformUrl: webConfig.urls.platformUrl,
+  pluginId: webConfig.env.pluginId,
+});
 
-export const signInWithOAuth = async (
-  provider: OAuthProvider = "google",
-): Promise<void> => {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase client is not initialized");
-
-  const { error } = await supabase.auth.signInWithOAuth({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    provider: provider as any,
-    options: {
-      redirectTo: `${window.location.origin}${window.location.pathname}`,
-    },
-  });
-
-  if (error) throw error;
+export const signInWithOAuth = async (): Promise<void> => {
+  await legacySignIn(authParams());
 };
 
 export const signOutWeb = async (): Promise<void> => {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase client is not initialized");
-
-  const { error } = await supabase.auth.signOut({ scope: "local" });
-  if (error) throw error;
+  await legacySignOut(authParams());
 };
 
 export const restoreSession = async () => {
