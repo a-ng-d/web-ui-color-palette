@@ -61,6 +61,13 @@ const webProFeatures = [
   "HELP_EMAIL",
 ];
 
+const systemColorMode: "figma-light" | "figma-dark" =
+  typeof window !== "undefined" &&
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "figma-dark"
+    : "figma-light";
+
 const webConfig: Config = {
   limits: {
     pageSize: 20,
@@ -76,7 +83,7 @@ const webConfig: Config = {
     platform: "figma" as const,
     editor: "web" as const,
     ui: "figma" as const,
-    colorMode: "figma-light" as const,
+    colorMode: systemColorMode,
     isDev: import.meta.env.DEV,
     isEmbed:
       typeof window !== "undefined" &&

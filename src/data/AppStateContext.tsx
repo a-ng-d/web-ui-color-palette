@@ -1,7 +1,17 @@
 import { createContext } from 'preact'
-import { useContext, useState, useEffect } from 'preact/hooks'
-import type { ComponentChildren } from 'preact'
-import type { BaseProps, PlanStatus, Service, Editor } from 'ui-ui-color-palette/types'
+import { useContext, useRef, useState, useEffect } from 'preact/hooks'
+import type { ComponentChildren, RefObject } from 'preact'
+import type {
+  AnnouncementsDigest,
+  BaseProps,
+  LicenseTrigger,
+  ModalContext,
+  NotificationMessage,
+  PlanStatus,
+  Service,
+  Editor,
+} from 'ui-ui-color-palette/types'
+import type { ManagePalette } from 'ui-ui-color-palette/ui/services'
 import { getSupabase, fetchUserEntitlements } from 'ui-ui-color-palette/external/auth'
 import { restoreSession, signInWithOAuth, signOutWeb } from "./webAuth";
 
@@ -18,7 +28,13 @@ export type WebAppState = Pick<
   | 'editor'
   | 'documentWidth'
   | 'service'
->
+> & {
+  modalContext: ModalContext
+  announcements: AnnouncementsDigest
+  notification: NotificationMessage
+  licenseTrigger: LicenseTrigger
+  pricingOrigin: string
+}
 
 const defaultAppState: WebAppState = {
   service: "MANAGE" as Service,
@@ -41,6 +57,18 @@ const defaultAppState: WebAppState = {
   creditsRenewalDate: 0,
   editor: "web" as Editor,
   documentWidth: typeof window !== "undefined" ? window.innerWidth : 1280,
+  modalContext: "EMPTY",
+  announcements: {
+    version: "",
+    status: "NO_ANNOUNCEMENTS",
+  },
+  notification: {
+    type: "INFO",
+    message: "",
+    timer: 5000,
+  },
+  licenseTrigger: { type: "ACTIVATE" },
+  pricingOrigin: "UNKNOWN",
 };
 
 interface AppStateContextType {
@@ -48,6 +76,7 @@ interface AppStateContextType {
   setState: (partial: Partial<WebAppState>) => void;
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
+  managePaletteRef: RefObject<ManagePalette>;
 }
 
 const AppStateContext = createContext<AppStateContextType>({
@@ -55,10 +84,12 @@ const AppStateContext = createContext<AppStateContextType>({
   setState: () => {},
   signIn: async () => {},
   signOut: async () => {},
+  managePaletteRef: { current: null },
 });
 
 export function AppStateProvider({ children }: { children: ComponentChildren }) {
   const [state, setStateFull] = useState<WebAppState>(defaultAppState)
+  const managePaletteRef = useRef<ManagePalette>(null)
 
   const setState = (partial: Partial<WebAppState>) =>
     setStateFull((prev) => ({ ...prev, ...partial }))
@@ -132,7 +163,9 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
   const signOut = async () => signOutWeb();
 
   return (
-    <AppStateContext.Provider value={{ state, setState, signIn, signOut }}>
+    <AppStateContext.Provider
+      value={{ state, setState, signIn, signOut, managePaletteRef }}
+    >
       {children}
     </AppStateContext.Provider>
   );

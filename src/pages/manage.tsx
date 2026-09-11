@@ -12,7 +12,7 @@ const WrappedManagePalette = WithConfig(
 ) as any;
 
 export default function ManagePage() {
-  const { state } = useAppState();
+  const { state, managePaletteRef } = useAppState();
   const currentUserId = state.userSession.userId;
   const { t } = useTranslate();
 
@@ -44,7 +44,11 @@ export default function ManagePage() {
           />
         </div>
       )}
-      <WrappedManagePalette {...state} appData={state} />
+      <WrappedManagePalette
+        ref={managePaletteRef}
+        {...state}
+        appData={state}
+      />
     </div>
   );
 }

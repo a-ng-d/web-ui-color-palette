@@ -19,11 +19,10 @@ const WrappedShortcuts = WithConfig(
   WithTranslation(Shortcuts as any) as any,
 ) as any;
 
-const noop = () => undefined;
-
 export function Sidebar() {
   const { path, route } = useLocation();
-  const { state, signIn, signOut } = useAppState();
+  const { state, setState, signIn, signOut, managePaletteRef } =
+    useAppState();
   const isCompact = useCompactLayout();
 
   const activeTab = path === "/" ? "/manage" : path;
@@ -68,17 +67,17 @@ export function Sidebar() {
           orientation="VERTICAL"
           onSignIn={signIn}
           onSignOut={signOut}
-          onReOpenAnnouncements={noop}
-          onReOpenOnboarding={noop}
-          onReOpenStore={noop}
-          onReOpenAbout={noop}
-          onReOpenReport={noop}
-          onReOpenPreferences={noop}
-          onReOpenLicense={noop}
-          onReOpenChat={noop}
-          onReOpenFeedback={noop}
-          onUpdateConsent={noop}
-          onUpdateLanguage={noop}
+          onReOpenAnnouncements={setState}
+          onReOpenOnboarding={() => managePaletteRef.current?.onStartTour()}
+          onReOpenStore={setState}
+          onReOpenAbout={setState}
+          onReOpenReport={setState}
+          onReOpenPreferences={setState}
+          onReOpenLicense={setState}
+          onReOpenChat={setState}
+          onReOpenFeedback={setState}
+          onUpdateConsent={setState}
+          onUpdateLanguage={setState}
         />
       </div>
     </nav>

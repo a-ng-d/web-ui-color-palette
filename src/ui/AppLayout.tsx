@@ -6,6 +6,7 @@ import "ui-ui-color-palette/ui/stylesheets/app.css";
 import "./web-layout.css";
 import { Sidebar } from "./Sidebar";
 import { NotificationHost } from "./NotificationHost";
+import { ModalHost } from "./ModalHost";
 import { useAppState } from "../data/AppStateContext";
 
 interface AppLayoutProps {
@@ -32,12 +33,14 @@ function useServiceSync() {
 
 export function AppLayout({ children }: AppLayoutProps) {
   useServiceSync();
+  const { state } = useAppState();
 
   return (
     <div id="app" class="web-app">
       <Sidebar />
-      <main>{children}</main>
+      <main inert={state.modalContext !== "EMPTY"}>{children}</main>
       <NotificationHost />
+      <ModalHost />
     </div>
   );
 }
