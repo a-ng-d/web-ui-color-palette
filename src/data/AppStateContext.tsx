@@ -1,6 +1,8 @@
 import { createContext } from 'preact'
 import { useContext, useRef, useState, useEffect } from 'preact/hooks'
 import type { ComponentChildren, RefObject } from 'preact'
+import { useTolgee } from '@tolgee/react'
+import type { ConsentConfiguration } from '@unoff/ui'
 import type {
   AnnouncementsDigest,
   BaseProps,
@@ -10,9 +12,23 @@ import type {
   PlanStatus,
   Service,
   Editor,
+  UserTheme,
 } from 'ui-ui-color-palette/types'
 import type { ManagePalette } from 'ui-ui-color-palette/ui/services'
 import { getSupabase, fetchUserEntitlements } from 'ui-ui-color-palette/external/auth'
+import {
+  $canStylesDeepSync,
+  $canTokensDeepSync,
+  $canVariablesDeepSync,
+  $creditsCount,
+  $isAPCADisplayed,
+  $isAPCAIntervalDisplayed,
+  $isSuggestedLanguageDisplayed,
+  $isWCAGDisplayed,
+  $isWCAGIntervalDisplayed,
+  $userTheme,
+  updateUserConsentWithData,
+} from 'ui-ui-color-palette/stores'
 import { restoreSession, signInWithOAuth, signOutWeb } from "./webAuth";
 
 export type WebAppState = Pick<
@@ -90,9 +106,64 @@ const AppStateContext = createContext<AppStateContextType>({
 export function AppStateProvider({ children }: { children: ComponentChildren }) {
   const [state, setStateFull] = useState<WebAppState>(defaultAppState)
   const managePaletteRef = useRef<ManagePalette>(null)
+  const tolgee = useTolgee()
 
   const setState = (partial: Partial<WebAppState>) =>
     setStateFull((prev) => ({ ...prev, ...partial }))
+
+  useEffect(() => {
+    const handler = (event: CustomEvent) => {
+      const { type, data } = event.detail ?? {}
+
+      const actions: Record<string, () => void> = {
+        CHECK_USER_PREFERENCES: () => {
+          $isWCAGDisplayed.set(data.isWCAGDisplayed)
+          $isAPCADisplayed.set(data.isAPCADisplayed)
+          $isWCAGIntervalDisplayed.set(data.isWCAGIntervalDisplayed)
+          $isAPCAIntervalDisplayed.set(data.isAPCAIntervalDisplayed)
+          $canStylesDeepSync.set(data.canDeepSyncStyles)
+          $canVariablesDeepSync.set(data.canDeepSyncVariables)
+          $canTokensDeepSync.set(data.canDeepSyncTokens)
+          $isSuggestedLanguageDisplayed.set(data.isSuggestedLanguageDisplayed)
+          $userTheme.set((data.userTheme ?? 'system') as UserTheme)
+
+          tolgee.changeLanguage(data.userLanguage).then(() => {
+            document.documentElement.setAttribute(
+              'lang',
+              data.userLanguage ?? tolgee.getLanguage(),
+            )
+          })
+        },
+        CHECK_USER_CONSENT: () => {
+          const userConsent = data.userConsent as Array<ConsentConfiguration>
+          updateUserConsentWithData(tolgee.t, userConsent)
+          setState({ userConsent })
+        },
+        CHECK_CREDITS: () => {
+          $creditsCount.set(data.creditsCount)
+          setState({
+            creditsCount: data.creditsCount,
+            creditsRenewalDate: data.creditsRenewalDate,
+          })
+        },
+        CHECK_TRIAL_STATUS: () => {
+          setStateFull((prev) => ({
+            ...prev,
+            planStatus: data.planStatus === 'PAID' ? 'PAID' : prev.planStatus,
+            trialStatus: data.trialStatus,
+            trialRemainingTime: data.trialRemainingTime,
+          }))
+        },
+      }
+
+      actions[type]?.()
+    }
+
+    window.addEventListener('platformMessage', handler as EventListener)
+    return () =>
+      window.removeEventListener('platformMessage', handler as EventListener)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const supabase = getSupabase()

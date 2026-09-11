@@ -2,7 +2,7 @@ import { useEffect } from "preact/hooks";
 import type { ComponentChildren } from "preact";
 import { useTolgee } from "@tolgee/react";
 import type { UserTheme } from "ui-ui-color-palette/types";
-import { $userTheme } from "ui-ui-color-palette/stores";
+import { $userTheme, getUserConsent } from "ui-ui-color-palette/stores";
 import { initDb } from "./db";
 import { startBridge } from "./loadBridge";
 import { setT } from "./context";
@@ -24,6 +24,21 @@ export function WebBridgeProvider({ children }: WebBridgeProviderProps) {
 
     initDb()
       .then(() => startBridge())
+      .then(() => {
+        window.dispatchEvent(
+          new CustomEvent("pluginMessage", {
+            detail: {
+              message: {
+                pluginMessage: {
+                  type: "LOAD_DATA",
+                  data: { userConsent: getUserConsent(tolgee.t) },
+                },
+              },
+              targetOrigin: "*",
+            },
+          }),
+        );
+      })
       .catch((err) =>
         console.error("[WebBridgeProvider] Failed to initialise bridge:", err),
       );

@@ -161,9 +161,9 @@ const webConfig: Config = {
   },
   features: doSpecificMode(webInactiveFeatures, webProFeatures, []),
   lang:
-    (typeof navigator !== "undefined"
-      ? (navigator.language?.split("-")[0] as Config["lang"])
-      : "en-US") ?? "en-US",
+    typeof navigator !== "undefined"
+      ? (navigator.language as Config["lang"])
+      : "en-US",
   fees: {
     colourLoversImport: 25,
     coolorsImport: 25,
