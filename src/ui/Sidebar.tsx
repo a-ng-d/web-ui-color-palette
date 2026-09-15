@@ -1,5 +1,5 @@
 import { useLocation } from "preact-iso";
-import { Button, Tabs } from "@unoff/ui";
+import { Bar, Button, Tabs } from "@unoff/ui";
 import type { IconList } from "@unoff/ui";
 import { useTranslate } from "@tolgee/react";
 import { WithConfig, WithTranslation } from "ui-ui-color-palette/ui/components";
@@ -30,57 +30,64 @@ export function Sidebar() {
   ];
 
   return (
-    <nav class="web-sidebar" aria-label="Services">
-      <div class="web-sidebar__nav">
-        {isCompact ? (
-          NAV_ITEMS.map(({ path: href, icon, label }) => (
-            <Button
-              key={href}
-              type="icon"
-              icon={icon}
-              state={href === activeTab ? "selected" : "default"}
-              helper={{ label }}
-              action={() => route(href)}
+    <Bar
+      id="main-navigation"
+      isVertical
+      border={["RIGHT"]}
+      leftPartSlot={
+        <nav class="main-navigation__nav" aria-label="Services">
+          {isCompact ? (
+            NAV_ITEMS.map(({ path: href, icon, label }) => (
+              <Button
+                key={href}
+                type="icon"
+                icon={icon}
+                state={href === activeTab ? "selected" : "default"}
+                helper={{ label }}
+                action={() => route(href)}
+              />
+            ))
+          ) : (
+            <Tabs
+              direction="VERTICAL"
+              active={activeTab}
+              tabs={NAV_ITEMS.map(({ path: href, icon, label }) => ({
+                id: href,
+                label,
+                icon: { type: "PICTO", name: icon },
+                isUpdated: false,
+              }))}
+              action={(event: Event) => {
+                const href = (event.currentTarget as HTMLElement | null)
+                  ?.dataset.feature;
+                if (href) route(href);
+              }}
             />
-          ))
-        ) : (
-          <Tabs
-            direction="VERTICAL"
-            active={activeTab}
-            tabs={NAV_ITEMS.map(({ path: href, icon, label }) => ({
-              id: href,
-              label,
-              icon: { type: "PICTO", name: icon },
-              isUpdated: false,
-            }))}
-            action={(event: Event) => {
-              const href = (event.currentTarget as HTMLElement | null)?.dataset
-                .feature;
-              if (href) route(href);
-            }}
+          )}
+        </nav>
+      }
+      rightPartSlot={
+        <div class="main-navigation__shortcuts">
+          <WrappedShortcuts
+            {...state}
+            announcements={{ version: "", status: "NO_ANNOUNCEMENTS" }}
+            orientation="VERTICAL"
+            onSignIn={signIn}
+            onSignOut={signOut}
+            onReOpenAnnouncements={setState}
+            onReOpenOnboarding={() => managePaletteRef.current?.onStartTour()}
+            onReOpenStore={setState}
+            onReOpenAbout={setState}
+            onReOpenReport={setState}
+            onReOpenPreferences={setState}
+            onReOpenLicense={setState}
+            onReOpenChat={setState}
+            onReOpenFeedback={setState}
+            onUpdateConsent={setState}
+            onUpdateLanguage={setState}
           />
-        )}
-      </div>
-      <div class="web-sidebar__shortcuts">
-        <WrappedShortcuts
-          {...state}
-          announcements={{ version: "", status: "NO_ANNOUNCEMENTS" }}
-          orientation="VERTICAL"
-          onSignIn={signIn}
-          onSignOut={signOut}
-          onReOpenAnnouncements={setState}
-          onReOpenOnboarding={() => managePaletteRef.current?.onStartTour()}
-          onReOpenStore={setState}
-          onReOpenAbout={setState}
-          onReOpenReport={setState}
-          onReOpenPreferences={setState}
-          onReOpenLicense={setState}
-          onReOpenChat={setState}
-          onReOpenFeedback={setState}
-          onUpdateConsent={setState}
-          onUpdateLanguage={setState}
-        />
-      </div>
-    </nav>
+        </div>
+      }
+    />
   );
 }

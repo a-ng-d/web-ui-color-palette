@@ -13,6 +13,7 @@ import type {
   PlanStatus,
   Service,
   Editor,
+  PalettesView,
   UserTheme,
 } from 'ui-ui-color-palette/types'
 import type { ManagePalette } from 'ui-ui-color-palette/ui/services'
@@ -32,6 +33,7 @@ import {
   $isWCAGDisplayed,
   $isWCAGIntervalDisplayed,
   $localPalettesCount,
+  $palettesView,
   $userTheme,
   updateUserConsentWithData,
 } from 'ui-ui-color-palette/stores'
@@ -176,6 +178,9 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
           $canTokensDeepSync.set(data.canDeepSyncTokens)
           $isSuggestedLanguageDisplayed.set(data.isSuggestedLanguageDisplayed)
           $userTheme.set((data.userTheme ?? 'system') as UserTheme)
+          $palettesView.set(
+            (data.palettesView ?? 'MOSAIC') as PalettesView
+          )
 
           setState({
             suggestedLanguage: detectSuggestedLanguage(data.userLanguage),

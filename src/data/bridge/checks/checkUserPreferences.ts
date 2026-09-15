@@ -20,6 +20,7 @@ const checkUserPreferences = async () => {
   )
   const userLanguage = window.localStorage.getItem('user_language')
   const userTheme = window.localStorage.getItem('user_theme')
+  const palettesView = window.localStorage.getItem('palettes_view')
 
   if (isWCAGDisplayed === null)
     window.localStorage.setItem('is_wcag_displayed', 'true')
@@ -40,6 +41,8 @@ const checkUserPreferences = async () => {
   if (userLanguage === null)
     window.localStorage.setItem('user_language', webConfig.lang)
   if (userTheme === null) window.localStorage.setItem('user_theme', 'system')
+  if (palettesView === null)
+    window.localStorage.setItem('palettes_view', 'MOSAIC')
 
   dispatch('CHECK_USER_PREFERENCES', {
     isWCAGDisplayed:
@@ -66,6 +69,7 @@ const checkUserPreferences = async () => {
         : isSuggestedLanguageDisplayed === 'true',
     userLanguage: userLanguage ?? webConfig.lang,
     userTheme: userTheme ?? 'system',
+    palettesView: palettesView ?? 'MOSAIC',
   })
 }
 
