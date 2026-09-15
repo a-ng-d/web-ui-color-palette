@@ -2,7 +2,7 @@ import type { Config } from "ui-ui-color-palette/types";
 import { doSpecificMode } from "ui-ui-color-palette/stores";
 
 const webInactiveFeatures = [
-  "LOCAL_PALETTES_PAGE",
+  "LOCAL_PALETTES_FILE",
   "IMPORTS_CANVAS",
   "DOCUMENT_CREATE",
   "DOCUMENT_PUSH_UPDATES",

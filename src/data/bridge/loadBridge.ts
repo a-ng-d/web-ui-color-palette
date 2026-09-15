@@ -21,6 +21,25 @@ import updateScale from "./updates/updateScale";
 import updateSettings from "./updates/updateSettings";
 import updateThemes from "./updates/updateThemes";
 
+const paletteMutationQueues = new Map<string, Promise<void>>();
+
+const runSerializedByPaletteId = <T>(
+  id: string | undefined,
+  task: () => Promise<T>,
+): Promise<T> => {
+  const key = id ?? "__no_id__";
+  const previous = paletteMutationQueues.get(key) ?? Promise.resolve();
+  const result = previous.then(task, task);
+  paletteMutationQueues.set(
+    key,
+    result.then(
+      () => undefined,
+      () => undefined,
+    ),
+  );
+  return result;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleBridgeMessage = async (path: any) => {
   const actions: Record<string, () => void | Promise<void>> = {
@@ -52,27 +71,33 @@ const handleBridgeMessage = async (path: any) => {
 
     // Updates
     UPDATE_SCALE: () =>
-      updateScale(path).catch((error) =>
-        dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
+      runSerializedByPaletteId(path.id, () => updateScale(path)).catch(
+        (error) =>
+          dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
       ),
     UPDATE_COLORS: () =>
-      updateColors(path).catch((error) =>
-        dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
+      runSerializedByPaletteId(path.id, () => updateColors(path)).catch(
+        (error) =>
+          dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
       ),
     UPDATE_THEMES: () =>
-      updateThemes(path).catch((error) =>
-        dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
+      runSerializedByPaletteId(path.id, () => updateThemes(path)).catch(
+        (error) =>
+          dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
       ),
     UPDATE_SETTINGS: () =>
-      updateSettings(path).catch((error) =>
-        dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
+      runSerializedByPaletteId(path.id, () => updateSettings(path)).catch(
+        (error) =>
+          dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
       ),
     UPDATE_PALETTE: () =>
-      updatePalette({
-        msg: path,
-        isAlreadyUpdated: path.isAlreadyUpdated,
-        shouldLoadPalette: path.shouldLoadPalette,
-      }).catch((error) =>
+      runSerializedByPaletteId(path.id, () =>
+        updatePalette({
+          msg: path,
+          isAlreadyUpdated: path.isAlreadyUpdated,
+          shouldLoadPalette: path.shouldLoadPalette,
+        }),
+      ).catch((error) =>
         dispatch("POST_MESSAGE", { type: "ERROR", message: error.message }),
       ),
     UPDATE_LANGUAGE: () => {
@@ -203,13 +228,8 @@ const handleBridgeMessage = async (path: any) => {
     GET_TRIAL: () => dispatch("GET_TRIAL"),
     GET_PRO: () =>
       dispatch("GET_PRICING", {
-        licenseTrigger: {
-          type: "CUSTOM_CHECKOUT",
-          imageSrc: "",
-          title: "",
-          text: "",
-          cta: "",
-        },
+        licenseTrigger: "ACTIVATE",
+        origin: path.data?.origin ?? "UNKNOWN",
       }),
     GET_LICENSE: () => dispatch("GET_LICENSE"),
     GO_TO_ULTIMATE_REQUEST: () => {
