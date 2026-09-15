@@ -1,8 +1,14 @@
-export const dispatch = (type: string, data?: unknown): void => {
+window.addEventListener("message", (event: MessageEvent) => {
+  if (event.source !== window) return;
   window.dispatchEvent(
-    new CustomEvent("platformMessage", {
-      detail: data !== undefined ? { type, data } : { type },
-    }),
+    new CustomEvent("platformMessage", { detail: event.data }),
+  );
+});
+
+export const dispatch = (type: string, data?: unknown): void => {
+  window.postMessage(
+    data !== undefined ? { type, data } : { type },
+    window.location.origin,
   );
 };
 

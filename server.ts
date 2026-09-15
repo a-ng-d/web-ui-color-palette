@@ -15,7 +15,7 @@ async function createServer() {
 
     app.use(express.static(path.resolve(__dirname, 'dist/client'), { index: false }))
 
-    app.get('*', async (req, res) => {
+    app.use(async (req, res) => {
       try {
         const template = fs.readFileSync(
           path.resolve(__dirname, 'dist/client/index.html'),
@@ -51,7 +51,7 @@ async function createServer() {
     const app = express()
     app.use(vite.middlewares)
 
-    app.get('*', async (req, res) => {
+    app.use(async (req, res) => {
       try {
         let template = fs.readFileSync(
           path.resolve(__dirname, 'index.html'),

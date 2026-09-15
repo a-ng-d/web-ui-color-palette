@@ -6,6 +6,7 @@ import type { ConsentConfiguration } from '@unoff/ui'
 import type {
   AnnouncementsDigest,
   BaseProps,
+  Language,
   LicenseTrigger,
   ModalContext,
   NotificationMessage,
@@ -16,6 +17,10 @@ import type {
 } from 'ui-ui-color-palette/types'
 import type { ManagePalette } from 'ui-ui-color-palette/ui/services'
 import { getSupabase, fetchUserEntitlements } from 'ui-ui-color-palette/external/auth'
+import { checkAnnouncementsVersion } from 'ui-ui-color-palette/external/cms'
+import { validateUserLicenseKey } from 'ui-ui-color-palette/external/license'
+import isValidPaletteConfiguration from 'ui-ui-color-palette/utils/isValidPaletteConfiguration'
+import webConfig from './webConfig'
 import {
   $canStylesDeepSync,
   $canTokensDeepSync,
@@ -26,10 +31,37 @@ import {
   $isSuggestedLanguageDisplayed,
   $isWCAGDisplayed,
   $isWCAGIntervalDisplayed,
+  $localPalettesCount,
   $userTheme,
   updateUserConsentWithData,
 } from 'ui-ui-color-palette/stores'
 import { restoreSession, signInWithOAuth, signOutWeb } from "./webAuth";
+
+const LANGUAGE_MAPPING: Partial<Record<string, Language>> = {
+  'en-US': 'en-US',
+  en: 'en-US',
+  'pt-BR': 'pt-BR',
+  pt: 'pt-BR',
+  'fr-FR': 'fr-FR',
+  fr: 'fr-FR',
+  'zh-Hans-CN': 'zh-Hans-CN',
+  zh: 'zh-Hans-CN',
+  'es-ES': 'es-ES',
+  es: 'es-ES',
+  'ja-JP': 'ja-JP',
+  ja: 'ja-JP',
+  'ko-KR': 'ko-KR',
+  ko: 'ko-KR',
+}
+
+const detectSuggestedLanguage = (userLanguage: Language): Language | null => {
+  const browserLang = navigator.language
+  const suggested =
+    LANGUAGE_MAPPING[browserLang] ??
+    LANGUAGE_MAPPING[browserLang.split('-')[0]]
+
+  return suggested && suggested !== userLanguage ? suggested : null
+}
 
 export type WebAppState = Pick<
   BaseProps,
@@ -45,11 +77,15 @@ export type WebAppState = Pick<
   | 'documentWidth'
   | 'service'
 > & {
+  isAccountSubscribed: boolean
   modalContext: ModalContext
+  mustUserConsent: boolean
   announcements: AnnouncementsDigest
   notification: NotificationMessage
   licenseTrigger: LicenseTrigger
   pricingOrigin: string
+  localPalettesCount: number
+  suggestedLanguage: Language | null
 }
 
 const defaultAppState: WebAppState = {
@@ -72,8 +108,10 @@ const defaultAppState: WebAppState = {
   creditsCount: 0,
   creditsRenewalDate: 0,
   editor: "web" as Editor,
-  documentWidth: typeof window !== "undefined" ? window.innerWidth : 1280,
+  documentWidth:
+    typeof document !== "undefined" ? document.documentElement.clientWidth : 1280,
   modalContext: "EMPTY",
+  mustUserConsent: false,
   announcements: {
     version: "",
     status: "NO_ANNOUNCEMENTS",
@@ -85,6 +123,9 @@ const defaultAppState: WebAppState = {
   },
   licenseTrigger: { type: "ACTIVATE" },
   pricingOrigin: "UNKNOWN",
+  localPalettesCount: 0,
+  isAccountSubscribed: false,
+  suggestedLanguage: null,
 };
 
 interface AppStateContextType {
@@ -112,6 +153,15 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
     setStateFull((prev) => ({ ...prev, ...partial }))
 
   useEffect(() => {
+    const handleResize = () =>
+      setState({ documentWidth: document.documentElement.clientWidth })
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
     const handler = (event: CustomEvent) => {
       const { type, data } = event.detail ?? {}
 
@@ -127,6 +177,10 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
           $isSuggestedLanguageDisplayed.set(data.isSuggestedLanguageDisplayed)
           $userTheme.set((data.userTheme ?? 'system') as UserTheme)
 
+          setState({
+            suggestedLanguage: detectSuggestedLanguage(data.userLanguage),
+          })
+
           tolgee.changeLanguage(data.userLanguage).then(() => {
             document.documentElement.setAttribute(
               'lang',
@@ -137,7 +191,10 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
         CHECK_USER_CONSENT: () => {
           const userConsent = data.userConsent as Array<ConsentConfiguration>
           updateUserConsentWithData(tolgee.t, userConsent)
-          setState({ userConsent })
+          setState({
+            userConsent,
+            mustUserConsent: Boolean(data.mustUserConsent),
+          })
         },
         CHECK_CREDITS: () => {
           $creditsCount.set(data.creditsCount)
@@ -152,6 +209,107 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
             planStatus: data.planStatus === 'PAID' ? 'PAID' : prev.planStatus,
             trialStatus: data.trialStatus,
             trialRemainingTime: data.trialRemainingTime,
+          }))
+        },
+        EXPOSE_PALETTES: () => {
+          const count = Array.isArray(data)
+            ? (data as Array<unknown>).filter(isValidPaletteConfiguration)
+                .length
+            : 0
+          $localPalettesCount.set(count)
+          setState({ localPalettesCount: count })
+        },
+        CHECK_USER_LICENSE: () => {
+          validateUserLicenseKey({
+            corsWorkerUrl: webConfig.urls.corsWorkerUrl,
+            storeApiUrl: webConfig.urls.storeApiUrl,
+            licenseKey: data.licenseKey,
+            instanceId: data.instanceId,
+          })
+            .then((isValid: boolean) => {
+              if (!isValid) return
+              setStateFull((prev) => ({
+                ...prev,
+                planStatus: 'PAID',
+                trialStatus:
+                  prev.trialStatus !== 'UNUSED' ? 'SUSPENDED' : prev.trialStatus,
+              }))
+            })
+            .catch(console.error)
+        },
+        GET_TRIAL: () => {
+          setState({ modalContext: 'TRY' })
+        },
+        ENABLE_TRIAL: () => {
+          setState({
+            planStatus: 'PAID',
+            trialStatus: 'PENDING',
+            modalContext: 'WELCOME_TO_TRIAL',
+          })
+        },
+        GET_PRICING: () => {
+          setState({
+            modalContext: 'PRICING',
+            licenseTrigger: data.licenseTrigger,
+            pricingOrigin: data.origin ?? 'UNKNOWN',
+          })
+        },
+        GET_LICENSE: () => {
+          setState({ modalContext: 'LICENSE' })
+        },
+        ENABLE_PRO_PLAN: () => {
+          setState({ planStatus: 'PAID' })
+        },
+        LEAVE_PRO_PLAN: () => {
+          setState({ planStatus: 'UNPAID' })
+        },
+        WELCOME_TO_PRO: () => {
+          setStateFull((prev) => ({
+            ...prev,
+            planStatus: 'PAID',
+            modalContext: 'WELCOME_TO_PRO',
+            trialStatus:
+              prev.trialStatus !== 'UNUSED' ? 'SUSPENDED' : prev.trialStatus,
+          }))
+        },
+        CHECK_ANNOUNCEMENTS_VERSION: () => {
+          checkAnnouncementsVersion(
+            webConfig.urls.announcementsWorkerUrl,
+            webConfig.env.announcementsDbId,
+          )
+            .then((version: string) => {
+              setStateFull((prev) => ({
+                ...prev,
+                announcements: { version, status: 'NO_ANNOUNCEMENTS' },
+              }))
+
+              window.dispatchEvent(
+                new CustomEvent('pluginMessage', {
+                  detail: {
+                    message: {
+                      pluginMessage: {
+                        type: 'CHECK_ANNOUNCEMENTS_STATUS',
+                        data: { version },
+                      },
+                    },
+                    targetOrigin: '*',
+                  },
+                }),
+              )
+            })
+            .catch(console.error)
+        },
+        PUSH_ANNOUNCEMENTS_STATUS: () => {
+          setStateFull((prev) => ({
+            ...prev,
+            modalContext:
+              data.status === 'DISPLAY_ANNOUNCEMENTS_DIALOG'
+                ? 'ANNOUNCEMENTS'
+                : 'EMPTY',
+            announcements: {
+              version: prev.announcements.version,
+              status: data.status,
+            },
           }))
         },
       }
@@ -194,7 +352,10 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
         fetchUserEntitlements(userId)
           .then((result) => {
             if (result?.planStatus)
-              setState({ planStatus: result.planStatus as PlanStatus });
+              setState({
+                planStatus: result.planStatus as PlanStatus,
+                isAccountSubscribed: result.planStatus === "PAID",
+              });
           })
           .catch(console.error);
     };
@@ -205,7 +366,8 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
           SIGNED_IN: () => applySession(session),
           TOKEN_REFRESHED: () => applySession(session),
           SIGNED_OUT: () => {
-            setState({
+            setStateFull((prev) => ({
+              ...prev,
               userSession: {
                 connectionStatus: "UNCONNECTED",
                 userId: "",
@@ -213,8 +375,9 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
                 userAvatar: "",
               },
               userIdentity: { id: "", fullName: "", avatar: "" },
-              planStatus: "UNPAID",
-            });
+              isAccountSubscribed: false,
+              planStatus: prev.isAccountSubscribed ? "UNPAID" : prev.planStatus,
+            }));
           },
         };
 

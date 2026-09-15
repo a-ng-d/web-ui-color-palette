@@ -1,18 +1,11 @@
 import { useLocation } from "preact-iso";
 import { Button, Tabs } from "@unoff/ui";
 import type { IconList } from "@unoff/ui";
+import { useTranslate } from "@tolgee/react";
 import { WithConfig, WithTranslation } from "ui-ui-color-palette/ui/components";
 import { Shortcuts } from "ui-ui-color-palette/ui/modules";
 import { useAppState } from "../data/AppStateContext";
 import { useCompactLayout } from "./useCompactLayout";
-
-const NAV_ITEMS: Array<{ path: string; icon: IconList; label: string }> = [
-  { path: "/manage", icon: "colors", label: "Manage" },
-  { path: "/gen", icon: "ai", label: "Generate" },
-  { path: "/extract", icon: "image", label: "Extract" },
-  { path: "/wheel", icon: "list-tile", label: "Wheel" },
-  { path: "/explore", icon: "explore", label: "Explore" },
-];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const WrappedShortcuts = WithConfig(
@@ -24,8 +17,17 @@ export function Sidebar() {
   const { state, setState, signIn, signOut, managePaletteRef } =
     useAppState();
   const isCompact = useCompactLayout();
+  const { t } = useTranslate();
 
   const activeTab = path === "/" ? "/manage" : path;
+
+  const NAV_ITEMS: Array<{ path: string; icon: IconList; label: string }> = [
+    { path: "/manage", icon: "colors", label: t("services.manage") },
+    { path: "/gen", icon: "ai", label: t("services.generate") },
+    { path: "/extract", icon: "image", label: t("services.extract") },
+    { path: "/wheel", icon: "list-tile", label: t("services.wheel") },
+    { path: "/explore", icon: "explore", label: t("services.explore") },
+  ];
 
   return (
     <nav class="web-sidebar" aria-label="Services">
@@ -62,7 +64,6 @@ export function Sidebar() {
       <div class="web-sidebar__shortcuts">
         <WrappedShortcuts
           {...state}
-          isAccountSubscribed={false}
           announcements={{ version: "", status: "NO_ANNOUNCEMENTS" }}
           orientation="VERTICAL"
           onSignIn={signIn}

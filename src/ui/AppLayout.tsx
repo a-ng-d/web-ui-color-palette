@@ -7,6 +7,8 @@ import "./web-layout.css";
 import { Sidebar } from "./Sidebar";
 import { NotificationHost } from "./NotificationHost";
 import { ModalHost } from "./ModalHost";
+import { ConsentHost } from "./ConsentHost";
+import { LanguageSuggestionBanner } from "./LanguageSuggestionBanner";
 import { useAppState } from "../data/AppStateContext";
 
 interface AppLayoutProps {
@@ -38,9 +40,15 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <div id="app" class="web-app">
       <Sidebar />
-      <main inert={state.modalContext !== "EMPTY"}>{children}</main>
+      <main
+        inert={state.modalContext !== "EMPTY" || state.mustUserConsent}
+      >
+        <LanguageSuggestionBanner />
+        {children}
+      </main>
       <NotificationHost />
       <ModalHost />
+      <ConsentHost />
     </div>
   );
 }

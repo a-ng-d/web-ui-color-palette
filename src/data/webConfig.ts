@@ -61,12 +61,12 @@ const webProFeatures = [
   "HELP_EMAIL",
 ];
 
-const systemColorMode: "figma-light" | "figma-dark" =
+const systemColorMode: "yelbolt-uicp-light" | "yelbolt-uicp-dark" =
   typeof window !== "undefined" &&
   typeof window.matchMedia === "function" &&
   window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "figma-dark"
-    : "figma-light";
+    ? "yelbolt-uicp-dark"
+    : "yelbolt-uicp-light";
 
 const webConfig: Config = {
   limits: {
@@ -80,9 +80,9 @@ const webConfig: Config = {
     colorThemes: 2,
   },
   env: {
-    platform: "figma" as const,
+    platform: "yelbolt" as const,
     editor: "web" as const,
-    ui: "figma" as const,
+    ui: "yelbolt" as const,
     colorMode: systemColorMode,
     isDev: import.meta.env.DEV,
     isEmbed:
