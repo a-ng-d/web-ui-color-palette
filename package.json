@@ -10,6 +10,7 @@
     "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist/server",
     "start": "node --import tsx/esm server.ts",
     "preview": "NODE_ENV=production node --import tsx/esm server.ts",
+    "pretypecheck": "npm run build:types -w ui-ui-color-palette > /dev/null 2>&1 || true",
     "typecheck": "npx tsc --noEmit",
     "lint": "npx eslint ./src --fix --ext .ts,.tsx",
     "format": "npx prettier './src' --write",
