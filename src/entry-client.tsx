@@ -4,4 +4,7 @@ import { App } from './App'
 
 initExternals()
 
-hydrate(<App />, document.getElementById('root')!)
+const root = document.getElementById('root')
+if (!root) throw new Error('Root element not found')
+
+hydrate(<App />, root)

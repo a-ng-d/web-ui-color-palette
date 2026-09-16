@@ -6,10 +6,11 @@ import { useTranslate } from '@tolgee/react'
 import { useSyncPaletteUrl } from '../ui/useSyncPaletteUrl'
 import { resolvePaletteFromUrl } from '../data/urlPalette'
 import { useAppState } from '../data/AppStateContext'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any -- HOC wrappers erase the wrapped component's prop types */
 const WrappedManagePalette = WithConfig(
   WithTranslation(ManagePalette as any) as any
 ) as any
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export default function ManagePage() {
   const { state, managePaletteRef } = useAppState()

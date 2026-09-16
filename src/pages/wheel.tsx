@@ -2,10 +2,11 @@ import { ColorWheel } from 'ui-ui-color-palette/ui/services'
 import { WithConfig, WithTranslation } from 'ui-ui-color-palette/ui/components'
 import { useAppState } from '../data/AppStateContext'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any -- HOC wrappers erase the wrapped component's prop types */
 const WrappedColorWheel = WithConfig(
   WithTranslation(ColorWheel as any) as any
 ) as any
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export default function WheelPage() {
   const { state, setState } = useAppState()

@@ -21,11 +21,14 @@ function lazyRoute<T extends Record<string, unknown>>(
   factory: () => Promise<{ default: ComponentType<T> }>
 ): ComponentType<T> {
   const Lazy = lazy(factory)
-  return (props: T) => (
-    <Suspense fallback={null}>
-      <Lazy {...props} />
-    </Suspense>
-  )
+  function LazyRoute(props: T) {
+    return (
+      <Suspense fallback={null}>
+        <Lazy {...props} />
+      </Suspense>
+    )
+  }
+  return LazyRoute
 }
 
 const ManagePage = lazyRoute(() => import('./pages/manage'))

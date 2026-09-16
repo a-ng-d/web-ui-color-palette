@@ -21,7 +21,13 @@ import {
   getSupabase,
   fetchUserEntitlements,
 } from 'ui-ui-color-palette/external/auth'
-import { useContext, useRef, useState, useEffect } from 'preact/hooks'
+import {
+  useContext,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+} from 'preact/hooks'
 import { createContext } from 'preact'
 import { useTolgee } from '@tolgee/react'
 import webConfig from './webConfig'
@@ -142,6 +148,7 @@ interface AppStateContextType {
   managePaletteRef: RefObject<ManagePalette>
 }
 
+/* eslint-disable @typescript-eslint/no-empty-function -- placeholder default, replaced by AppStateProvider's real implementation */
 const AppStateContext = createContext<AppStateContextType>({
   state: defaultAppState,
   setState: () => {},
@@ -149,6 +156,7 @@ const AppStateContext = createContext<AppStateContextType>({
   signOut: async () => {},
   managePaletteRef: { current: null },
 })
+/* eslint-enable @typescript-eslint/no-empty-function */
 
 export function AppStateProvider({
   children,
@@ -159,8 +167,11 @@ export function AppStateProvider({
   const managePaletteRef = useRef<ManagePalette>(null)
   const tolgee = useTolgee()
 
-  const setState = (partial: Partial<WebAppState>) =>
-    setStateFull((prev) => ({ ...prev, ...partial }))
+  const setState = useCallback(
+    (partial: Partial<WebAppState>) =>
+      setStateFull((prev) => ({ ...prev, ...partial })),
+    []
+  )
 
   useEffect(() => {
     const handleResize = () =>
@@ -168,7 +179,7 @@ export function AppStateProvider({
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  }, [setState])
 
   useEffect(() => {
     const handler = (event: CustomEvent) => {
@@ -332,6 +343,7 @@ export function AppStateProvider({
     window.addEventListener('platformMessage', handler as EventListener)
     return () =>
       window.removeEventListener('platformMessage', handler as EventListener)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -401,7 +413,7 @@ export function AppStateProvider({
     })
 
     return () => subscription?.subscription?.unsubscribe()
-  }, [])
+  }, [setState])
 
   const signIn = async () => signInWithOAuth()
 

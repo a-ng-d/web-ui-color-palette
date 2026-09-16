@@ -36,7 +36,7 @@ function useServiceSync() {
 
   useEffect(() => {
     setState({ service: SERVICE_BY_PATH[path] ?? 'MANAGE' })
-  }, [path])
+  }, [path, setState])
 }
 
 export function AppLayout({ children }: AppLayoutProps) {

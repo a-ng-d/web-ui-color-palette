@@ -4,7 +4,6 @@ import { setPalette } from '../db'
 import { dispatch } from '../context'
 import type {
   ColorConfiguration,
-  Data,
   ExchangeConfiguration,
   SourceColorConfiguration,
   ThemeConfiguration,

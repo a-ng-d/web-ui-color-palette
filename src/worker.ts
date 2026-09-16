@@ -1,4 +1,4 @@
-// @ts-expect-error
+// @ts-expect-error -- generated at build time, no type declarations exist for it
 import { render } from '../dist/server/entry-server.js'
 
 interface Env {

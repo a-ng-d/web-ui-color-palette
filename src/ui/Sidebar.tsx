@@ -7,10 +7,11 @@ import { useTranslate } from '@tolgee/react'
 import { useAppState } from '../data/AppStateContext'
 import { useCompactLayout } from './useCompactLayout'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any -- HOC wrappers erase the wrapped component's prop types */
 const WrappedShortcuts = WithConfig(
   WithTranslation(Shortcuts as any) as any
 ) as any
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export function Sidebar() {
   const { path, route } = useLocation()

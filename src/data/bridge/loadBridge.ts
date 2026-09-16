@@ -251,6 +251,7 @@ const handleBridgeMessage = async (path: any) => {
 
     CHECK_EDITOR_TYPE: () => checkEditorType(),
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function -- fallback no-op for unhandled message types
     DEFAULT: () => {},
   }
 

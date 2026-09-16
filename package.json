@@ -30,6 +30,7 @@
     "@preact/preset-vite": "^2.10.1",
     "@types/express": "^5.0.3",
     "@types/node": "latest",
+    "eslint-plugin-react-hooks": "^4.6.2",
     "express": "^5.1.0",
     "tsx": "^4.20.3",
     "typescript": "latest",

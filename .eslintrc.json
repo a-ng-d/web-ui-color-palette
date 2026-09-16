@@ -18,12 +18,15 @@
   },
   "plugins": [
     "react",
+    "react-hooks",
     "@typescript-eslint",
     "import"
   ],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/no-explicit-any": [1],
     "eqeqeq": ["error", "always", { "null": "ignore" }],
     "curly": ["warn", "multi"],
