@@ -68,6 +68,20 @@ const systemColorMode: 'yelbolt-uicp-light' | 'yelbolt-uicp-dark' =
     ? 'yelbolt-uicp-dark'
     : 'yelbolt-uicp-light'
 
+const getBrowserLang = (): Config['lang'] => {
+  const navigatorLang = navigator.language as Config['lang']
+
+  if (!navigator) return 'en-US'
+  else if (navigatorLang.includes('en')) return 'en-US'
+  else if (navigatorLang.includes('fr')) return 'fr-FR'
+  else if (navigatorLang.includes('es')) return 'es-ES'
+  else if (navigatorLang.includes('pt')) return 'pt-BR'
+  else if (navigatorLang.includes('ja')) return 'ja-JP'
+  else if (navigatorLang.includes('ko')) return 'ko-KR'
+  else if (navigatorLang.includes('zh')) return 'zh-Hans-CN'
+  return navigatorLang
+}
+
 const webConfig: Config = {
   limits: {
     pageSize: 20,
@@ -76,7 +90,7 @@ const webConfig: Config = {
     minWidth: 280,
     minHeight: 400,
     sourceColors: 5,
-    customStops: 8,
+    customStops: 6,
     colorThemes: 2,
   },
   env: {
@@ -134,8 +148,7 @@ const webConfig: Config = {
     repositoryUrl: 'https://uicp.ylb.lt/repository',
     communityUrl: 'https://uicp.ylb.lt/community',
     supportEmail: 'https://uicp.ylb.lt/support',
-    feedbackUrl:
-      'https://angd.notion.site/ebd/13df8c62fd868018989de53f17ad6df3',
+    feedbackUrl: 'https://uicp.ylb.lt/feedback',
     trialFeedbackUrl: 'https://uicp.ylb.lt/feedback-trial',
     requestsUrl: 'https://uicp.ylb.lt/ideas',
     networkUrl: 'https://uicp.ylb.lt/network',
@@ -160,10 +173,7 @@ const webConfig: Config = {
     creditsVersion: '2026.05',
   },
   features: doSpecificMode(webInactiveFeatures, webProFeatures, []),
-  lang:
-    typeof navigator !== 'undefined'
-      ? (navigator.language as Config['lang'])
-      : 'en-US',
+  lang: getBrowserLang(),
   fees: {
     colourLoversImport: 25,
     coolorsImport: 25,
@@ -187,7 +197,7 @@ const limitsMapping: { [key: string]: keyof typeof webConfig.limits } = {
   THEMES_ADD: 'colorThemes',
   PRESETS_CUSTOM_ADD: 'customStops',
   LOCAL_PALETTES: 'localPalettes',
-}
+}  
 
 webConfig.features.forEach((feature) => {
   const limitKey = limitsMapping[feature.name]
