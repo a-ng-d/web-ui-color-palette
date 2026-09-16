@@ -1,5 +1,5 @@
-import { $palette } from 'ui-ui-color-palette/stores'
 import { useEffect, useRef } from 'preact/hooks'
+import { $palette } from '@ui-lib/stores'
 import { useStore } from '@nanostores/preact'
 
 export function useSyncPaletteUrl() {

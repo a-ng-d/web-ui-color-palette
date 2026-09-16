@@ -1,8 +1,8 @@
 import { doScale } from '@unoff/utils'
 import { getPalette, setPalette } from '../db'
 import { dispatch } from '../context'
-import type { ScaleMessage } from 'ui-ui-color-palette/types'
 import type { FullConfiguration } from '@yelbolt/engine-ui-color-palette'
+import type { ScaleMessage } from '@ui-lib/types'
 
 const updateScale = async (msg: ScaleMessage) => {
   const now = new Date().toISOString()

@@ -1,5 +1,5 @@
-import { ColorWheel } from 'ui-ui-color-palette/ui/services'
-import { WithConfig, WithTranslation } from 'ui-ui-color-palette/ui/components'
+import { ColorWheel } from '@ui-lib/ui/services'
+import { WithConfig, WithTranslation } from '@ui-lib/ui/components'
 import { useAppState } from '../data/AppStateContext'
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- HOC wrappers erase the wrapped component's prop types */

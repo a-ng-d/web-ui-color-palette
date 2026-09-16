@@ -1,9 +1,9 @@
-import { $isSuggestedLanguageDisplayed } from 'ui-ui-color-palette/stores'
 import { Button, SemanticMessage } from '@unoff/ui'
+import { $isSuggestedLanguageDisplayed } from '@ui-lib/stores'
 import { useTolgee, useTranslate } from '@tolgee/react'
 import { useStore } from '@nanostores/preact'
 import { useAppState } from '../data/AppStateContext'
-import type { Language } from 'ui-ui-color-palette/types'
+import type { Language } from '@ui-lib/types'
 
 const LANGUAGE_SUGGESTION_KEYS: Partial<Record<Language, string>> = {
   'en-US': 'en',

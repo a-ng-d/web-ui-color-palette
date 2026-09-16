@@ -1,4 +1,4 @@
-import { getSupabase } from 'ui-ui-color-palette/external/auth'
+import { getSupabase } from '@ui-lib/external/auth'
 import webConfig from './webConfig'
 import jumpToPalette from './bridge/gets/jumpToPalette'
 import getPalettesOnCurrentPage from './bridge/gets/getPalettesOnCurrentPage'

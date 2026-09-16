@@ -18,7 +18,8 @@
       "react": ["./node_modules/preact/compat/src/index.d.ts"],
       "react/jsx-runtime": ["./node_modules/preact/jsx-runtime/src/index.d.ts"],
       "react-dom": ["./node_modules/preact/compat/src/index.d.ts"],
-      "react-dom/*": ["./node_modules/preact/compat/src/*"]
+      "react-dom/*": ["./node_modules/preact/compat/src/*"],
+      "@ui-lib/*": ["./packages/ui-ui-color-palette/src/*"]
     }
   },
   "include": ["src", "server.ts", "env.d.ts"],

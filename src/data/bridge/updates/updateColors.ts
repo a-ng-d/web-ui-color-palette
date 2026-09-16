@@ -1,7 +1,7 @@
 import { getPalette, setPalette } from '../db'
 import { dispatch } from '../context'
-import type { ColorsMessage } from 'ui-ui-color-palette/types'
 import type { FullConfiguration } from '@yelbolt/engine-ui-color-palette'
+import type { ColorsMessage } from '@ui-lib/types'
 
 const updateColors = async (msg: ColorsMessage) => {
   const now = new Date().toISOString()

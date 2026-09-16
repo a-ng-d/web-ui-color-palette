@@ -1,6 +1,6 @@
-import { Modal } from 'ui-ui-color-palette/ui/contexts'
-import { WithConfig, WithTranslation } from 'ui-ui-color-palette/ui/components'
 import { createPortal } from 'preact/compat'
+import { Modal } from '@ui-lib/ui/contexts'
+import { WithConfig, WithTranslation } from '@ui-lib/ui/components'
 import { useAppState } from '../data/AppStateContext'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

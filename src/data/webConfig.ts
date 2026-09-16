@@ -1,5 +1,5 @@
-import { doSpecificMode } from 'ui-ui-color-palette/stores'
-import type { Config } from 'ui-ui-color-palette/types'
+import { doSpecificMode } from '@ui-lib/stores'
+import type { Config } from '@ui-lib/types'
 
 const webInactiveFeatures = [
   'LOCAL_PALETTES_FILE',

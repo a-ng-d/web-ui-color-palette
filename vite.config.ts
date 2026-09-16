@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { defineConfig } from 'vite'
 import preact from '@preact/preset-vite'
 
@@ -5,33 +6,36 @@ export default defineConfig({
   plugins: [preact()],
 
   define: {
-    __PLATFORM__: JSON.stringify("web"),
-    __COLOR_MODE__: JSON.stringify(process.env.COLOR_MODE ?? "light"),
-    __EDITOR__: JSON.stringify("web"),
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? "0.0.0"),
+    __PLATFORM__: JSON.stringify('web'),
+    __COLOR_MODE__: JSON.stringify(process.env.COLOR_MODE ?? 'light'),
+    __EDITOR__: JSON.stringify('web'),
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? '0.0.0'),
   },
 
   resolve: {
-    conditions: ["development", "browser"],
-    dedupe: ["preact"],
+    conditions: ['development', 'browser'],
+    dedupe: ['preact'],
+    alias: {
+      '@ui-lib': path.resolve(__dirname, './packages/ui-ui-color-palette/src'),
+    },
   },
 
   ssr: {
     noExternal: true,
 
     resolve: {
-      conditions: ["production", "browser", "module", "import", "default"],
+      conditions: ['production', 'browser', 'module', 'import', 'default'],
     },
   },
 
   build: {
-    outDir: "dist/client",
+    outDir: 'dist/client',
     rollupOptions: {
-      input: "index.html",
+      input: 'index.html',
     },
   },
 
   server: {
     port: 44100,
   },
-});
+})

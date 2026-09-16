@@ -1,14 +1,14 @@
-import { initPolar } from 'ui-ui-color-palette/external/transactional'
+import mixpanel from 'mixpanel-browser'
+import { initPolar } from '@ui-lib/external/transactional'
 import {
   initMixpanel,
   setEditor,
   setMixpanelEnv,
-} from 'ui-ui-color-palette/external/tracking'
-import { initSentry } from 'ui-ui-color-palette/external/monitoring'
-import { initMistral } from 'ui-ui-color-palette/external/mistral'
-import { initNotion } from 'ui-ui-color-palette/external/cms'
-import { initSupabase } from 'ui-ui-color-palette/external/auth'
-import mixpanel from 'mixpanel-browser'
+} from '@ui-lib/external/tracking'
+import { initSentry } from '@ui-lib/external/monitoring'
+import { initMistral } from '@ui-lib/external/mistral'
+import { initNotion } from '@ui-lib/external/cms'
+import { initSupabase } from '@ui-lib/external/auth'
 import * as Sentry from '@sentry/react'
 import webConfig from './webConfig'
 

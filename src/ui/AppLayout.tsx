@@ -8,7 +8,7 @@ import {
   yelboltModes,
   yelboltTypes,
 } from '@unoff/ui'
-import 'ui-ui-color-palette/ui/stylesheets/app.css'
+import '@ui-lib/ui/stylesheets/app.css'
 import './web-layout.css'
 import { useAppState } from '../data/AppStateContext'
 import { Sidebar } from './Sidebar'
@@ -16,8 +16,8 @@ import { NotificationHost } from './NotificationHost'
 import { ModalHost } from './ModalHost'
 import { LanguageSuggestionBanner } from './LanguageSuggestionBanner'
 import { ConsentHost } from './ConsentHost'
-import type { Service } from 'ui-ui-color-palette/types'
 import type { ComponentChildren } from 'preact'
+import type { Service } from '@ui-lib/types'
 
 if (typeof window !== 'undefined')
   (

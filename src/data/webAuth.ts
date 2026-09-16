@@ -2,7 +2,7 @@ import {
   getSupabase,
   signIn as legacySignIn,
   signOut as legacySignOut,
-} from 'ui-ui-color-palette/external/auth'
+} from '@ui-lib/external/auth'
 import webConfig from './webConfig'
 
 const authParams = () => ({

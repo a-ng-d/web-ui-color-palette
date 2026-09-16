@@ -1,11 +1,11 @@
-import { $userTheme, getUserConsent } from 'ui-ui-color-palette/stores'
 import { useEffect } from 'preact/hooks'
+import { $userTheme, getUserConsent } from '@ui-lib/stores'
 import { useTolgee } from '@tolgee/react'
 import { startBridge } from './loadBridge'
 import { initDb } from './db'
 import { setT } from './context'
-import type { UserTheme } from 'ui-ui-color-palette/types'
 import type { ComponentChildren } from 'preact'
+import type { UserTheme } from '@ui-lib/types'
 
 const USER_THEME_VALUES: UserTheme[] = ['light', 'dark', 'system']
 

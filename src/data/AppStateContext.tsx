@@ -1,5 +1,13 @@
 import type { ConsentConfiguration } from '@unoff/ui'
-import isValidPaletteConfiguration from 'ui-ui-color-palette/utils/isValidPaletteConfiguration'
+import {
+  useContext,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+} from 'preact/hooks'
+import { createContext } from 'preact'
+import isValidPaletteConfiguration from '@ui-lib/utils/isValidPaletteConfiguration'
 import {
   $canStylesDeepSync,
   $canTokensDeepSync,
@@ -14,25 +22,18 @@ import {
   $palettesView,
   $userTheme,
   updateUserConsentWithData,
-} from 'ui-ui-color-palette/stores'
-import { validateUserLicenseKey } from 'ui-ui-color-palette/external/license'
-import { checkAnnouncementsVersion } from 'ui-ui-color-palette/external/cms'
+} from '@ui-lib/stores'
+import { validateUserLicenseKey } from '@ui-lib/external/license'
+import { checkAnnouncementsVersion } from '@ui-lib/external/cms'
 import {
   getSupabase,
   fetchUserEntitlements,
-} from 'ui-ui-color-palette/external/auth'
-import {
-  useContext,
-  useRef,
-  useState,
-  useEffect,
-  useCallback,
-} from 'preact/hooks'
-import { createContext } from 'preact'
+} from '@ui-lib/external/auth'
 import { useTolgee } from '@tolgee/react'
 import webConfig from './webConfig'
 import { restoreSession, signInWithOAuth, signOutWeb } from './webAuth'
-import type { ManagePalette } from 'ui-ui-color-palette/ui/services'
+import type { ComponentChildren, RefObject } from 'preact'
+import type { ManagePalette } from '@ui-lib/ui/services'
 import type {
   AnnouncementsDigest,
   BaseProps,
@@ -45,8 +46,7 @@ import type {
   Editor,
   PalettesView,
   UserTheme,
-} from 'ui-ui-color-palette/types'
-import type { ComponentChildren, RefObject } from 'preact'
+} from '@ui-lib/types'
 
 const LANGUAGE_MAPPING: Partial<Record<string, Language>> = {
   'en-US': 'en-US',
