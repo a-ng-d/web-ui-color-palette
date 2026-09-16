@@ -72,8 +72,8 @@ export function AppLayout({ children }: AppLayoutProps) {
     >
       <Sidebar />
       <main inert={state.modalContext !== 'EMPTY' || state.mustUserConsent}>
-        <LanguageSuggestionBanner />
         {children}
+        <LanguageSuggestionBanner />
       </main>
       <NotificationHost />
       <ModalHost />
