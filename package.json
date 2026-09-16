@@ -39,5 +39,6 @@
     "typescript": "latest",
     "vite": "^6.3.5",
     "wrangler": "^4.132.0"
-  }
+  },
+  "version": "5.3.5"
 }
