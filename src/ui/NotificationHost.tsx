@@ -1,44 +1,44 @@
-import { useEffect, useState } from "preact/hooks";
-import { createPortal } from "preact/compat";
-import { Notification } from "@unoff/ui";
+import { useEffect, useState } from 'preact/hooks'
+import { createPortal } from 'preact/compat'
+import { Notification } from '@unoff/ui'
 
-type NotificationTone = "NEUTRAL" | "INFO" | "SUCCESS" | "WARNING" | "ERROR";
+type NotificationTone = 'NEUTRAL' | 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR'
 
 interface NotificationState {
-  type: NotificationTone;
-  message: string;
-  timer?: number;
+  type: NotificationTone
+  message: string
+  timer?: number
 }
 
 export function NotificationHost() {
   const [notification, setNotification] = useState<NotificationState | null>(
-    null,
-  );
+    null
+  )
 
   useEffect(() => {
     const handler = (event: CustomEvent) => {
-      if (event.detail?.type !== "POST_MESSAGE") return;
+      if (event.detail?.type !== 'POST_MESSAGE') return
 
       const data = event.detail.data as
         | { type: NotificationTone; message: string; timer?: number }
-        | undefined;
-      if (!data?.message) return;
+        | undefined
+      if (!data?.message) return
 
       setNotification({
         type: data.type,
         message: data.message,
         timer: data.timer === undefined ? 5000 : data.timer,
-      });
-    };
+      })
+    }
 
-    window.addEventListener("platformMessage", handler as EventListener);
+    window.addEventListener('platformMessage', handler as EventListener)
     return () =>
-      window.removeEventListener("platformMessage", handler as EventListener);
-  }, []);
+      window.removeEventListener('platformMessage', handler as EventListener)
+  }, [])
 
   const target =
-    typeof document !== "undefined" ? document.getElementById("toast") : null;
-  if (!notification || !target) return null;
+    typeof document !== 'undefined' ? document.getElementById('toast') : null
+  if (!notification || !target) return null
 
   return createPortal(
     <Notification
@@ -47,6 +47,6 @@ export function NotificationHost() {
       timer={notification.timer}
       onClose={() => setNotification(null)}
     />,
-    target,
-  );
+    target
+  )
 }

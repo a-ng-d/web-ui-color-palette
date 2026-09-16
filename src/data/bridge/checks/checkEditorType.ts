@@ -1,3 +1,3 @@
-const checkEditorType = async () => {};
+const checkEditorType = async () => {}
 
-export default checkEditorType;
+export default checkEditorType

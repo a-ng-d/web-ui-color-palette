@@ -1,28 +1,28 @@
-import { uid } from "uid";
+import { uid } from 'uid'
+import { Data as PaletteData } from '@yelbolt/engine-ui-color-palette'
+import { setPalette } from '../db'
+import { dispatch } from '../context'
 import type {
   ColorConfiguration,
   Data,
   ExchangeConfiguration,
   SourceColorConfiguration,
   ThemeConfiguration,
-} from "@yelbolt/engine-ui-color-palette";
-import { Data as PaletteData } from "@yelbolt/engine-ui-color-palette";
-import { setPalette } from "../db";
-import { dispatch } from "../context";
+} from '@yelbolt/engine-ui-color-palette'
 
 interface Msg {
   data: {
-    sourceColors: Array<SourceColorConfiguration>;
-    exchange: ExchangeConfiguration;
-    id?: string;
-  };
+    sourceColors: Array<SourceColorConfiguration>
+    exchange: ExchangeConfiguration
+    id?: string
+  }
 }
 
 const createPalette = async (msg: Msg) => {
   const colors: Array<ColorConfiguration> = msg.data.sourceColors
     .map((sourceColor) => ({
       name: sourceColor.name,
-      description: "",
+      description: '',
       rgb: sourceColor.rgb,
       id: uid(),
       hue: {
@@ -35,26 +35,26 @@ const createPalette = async (msg: Msg) => {
       },
       alpha: {
         isEnabled: false,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: '#FFFFFF',
       },
     }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   const themes: Array<ThemeConfiguration> = [
     {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       scale: msg.data.exchange.scale,
-      paletteBackground: "#FFFFFF",
+      paletteBackground: '#FFFFFF',
       visionSimulationMode: msg.data.exchange.visionSimulationMode,
       textColorsTheme: msg.data.exchange.textColorsTheme,
       isEnabled: true,
-      id: "00000000000",
-      type: "default theme",
+      id: '00000000000',
+      type: 'default theme',
     },
-  ];
+  ]
 
-  const now = new Date().toISOString();
+  const now = new Date().toISOString()
 
   const palette = new PaletteData({
     base: {
@@ -73,25 +73,25 @@ const createPalette = async (msg: Msg) => {
       dates: {
         createdAt: now,
         updatedAt: now,
-        publishedAt: "",
+        publishedAt: '',
         openedAt: now,
       },
       creatorIdentity: {
-        creatorId: "",
-        creatorFullName: "",
-        creatorAvatar: "",
+        creatorId: '',
+        creatorFullName: '',
+        creatorAvatar: '',
       },
       publicationStatus: {
         isShared: false,
         isPublished: false,
       },
     },
-  }).makePaletteFullData();
+  }).makePaletteFullData()
 
-  await setPalette(palette);
-  dispatch("LOAD_PALETTE", palette);
+  await setPalette(palette)
+  dispatch('LOAD_PALETTE', palette)
 
-  return palette.meta.id;
-};
+  return palette.meta.id
+}
 
-export default createPalette;
+export default createPalette

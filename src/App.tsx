@@ -1,22 +1,21 @@
-import { lazy, Suspense } from 'preact/compat'
-import type { ComponentType } from 'preact'
-import { Router, Route, LocationProvider } from 'preact-iso'
-import { TolgeeProvider } from '@tolgee/react'
+import zhHansCN from 'ui-ui-color-palette/translations/zh-Hans-CN.json'
+import ptBR from 'ui-ui-color-palette/translations/pt-BR.json'
+import koKR from 'ui-ui-color-palette/translations/ko-KR.json'
+import jaJP from 'ui-ui-color-palette/translations/ja-JP.json'
+import frFR from 'ui-ui-color-palette/translations/fr-FR.json'
+import esES from 'ui-ui-color-palette/translations/es-ES.json'
+import enUS from 'ui-ui-color-palette/translations/en-US.json'
+import { initTolgee } from 'ui-ui-color-palette/external/translation'
 import { ConfigProvider } from 'ui-ui-color-palette/config'
 import { ThemeProvider } from 'ui-ui-color-palette/config'
-import { initTolgee } from 'ui-ui-color-palette/external/translation'
+import { Router, Route, LocationProvider } from 'preact-iso'
+import { lazy, Suspense } from 'preact/compat'
+import { TolgeeProvider } from '@tolgee/react'
 import { AppLayout } from './ui/AppLayout'
-import { AppStateProvider } from './data/AppStateContext'
-import { WebBridgeProvider } from "./data/bridge/WebBridgeProvider";
-
-import enUS from 'ui-ui-color-palette/translations/en-US.json'
-import frFR from 'ui-ui-color-palette/translations/fr-FR.json'
-import ptBR from 'ui-ui-color-palette/translations/pt-BR.json'
-import zhHansCN from 'ui-ui-color-palette/translations/zh-Hans-CN.json'
-import esES from 'ui-ui-color-palette/translations/es-ES.json'
-import jaJP from 'ui-ui-color-palette/translations/ja-JP.json'
-import koKR from 'ui-ui-color-palette/translations/ko-KR.json'
 import webConfig from './data/webConfig'
+import { WebBridgeProvider } from './data/bridge/WebBridgeProvider'
+import { AppStateProvider } from './data/AppStateContext'
+import type { ComponentType } from 'preact'
 
 function lazyRoute<T extends Record<string, unknown>>(
   factory: () => Promise<{ default: ComponentType<T> }>
@@ -29,33 +28,36 @@ function lazyRoute<T extends Record<string, unknown>>(
   )
 }
 
-const ManagePage  = lazyRoute(() => import('./pages/manage'))
-const GenPage     = lazyRoute(() => import('./pages/gen'))
+const ManagePage = lazyRoute(() => import('./pages/manage'))
+const GenPage = lazyRoute(() => import('./pages/gen'))
 const ExtractPage = lazyRoute(() => import('./pages/extract'))
-const WheelPage   = lazyRoute(() => import('./pages/wheel'))
+const WheelPage = lazyRoute(() => import('./pages/wheel'))
 const ExplorePage = lazyRoute(() => import('./pages/explore'))
 
-let tolgee: ReturnType<typeof initTolgee> | undefined;
+let tolgee: ReturnType<typeof initTolgee> | undefined
 
 const getTolgee = () =>
   (tolgee ??= initTolgee(
-    import.meta.env.VITE_TOLGEE_URL ?? "",
-    import.meta.env.VITE_TOLGEE_API_KEY ?? "",
-    "en-US",
+    import.meta.env.VITE_TOLGEE_URL ?? '',
+    import.meta.env.VITE_TOLGEE_API_KEY ?? '',
+    'en-US',
     {
-      "en-US": enUS,
-      "fr-FR": frFR,
-      "pt-BR": ptBR,
-      "zh-Hans-CN": zhHansCN,
-      "es-ES": esES,
-      "ja-JP": jaJP,
-      "ko-KR": koKR,
-    },
-  ));
+      'en-US': enUS,
+      'fr-FR': frFR,
+      'pt-BR': ptBR,
+      'zh-Hans-CN': zhHansCN,
+      'es-ES': esES,
+      'ja-JP': jaJP,
+      'ko-KR': koKR,
+    }
+  ))
 
 export function App({ url }: { url?: string }) {
   return (
-    <TolgeeProvider tolgee={getTolgee()} fallback="...">
+    <TolgeeProvider
+      tolgee={getTolgee()}
+      fallback="..."
+    >
       <WebBridgeProvider>
         <ConfigProvider
           limits={webConfig.limits}
@@ -79,16 +81,31 @@ export function App({ url }: { url?: string }) {
                     <Route
                       path="/"
                       component={() => {
-                        if (typeof window !== "undefined")
-                          window.location.replace("/manage");
-                        return null;
+                        if (typeof window !== 'undefined')
+                          window.location.replace('/manage')
+                        return null
                       }}
                     />
-                    <Route path="/manage" component={ManagePage} />
-                    <Route path="/gen" component={GenPage} />
-                    <Route path="/extract" component={ExtractPage} />
-                    <Route path="/wheel" component={WheelPage} />
-                    <Route path="/explore" component={ExplorePage} />
+                    <Route
+                      path="/manage"
+                      component={ManagePage}
+                    />
+                    <Route
+                      path="/gen"
+                      component={GenPage}
+                    />
+                    <Route
+                      path="/extract"
+                      component={ExtractPage}
+                    />
+                    <Route
+                      path="/wheel"
+                      component={WheelPage}
+                    />
+                    <Route
+                      path="/explore"
+                      component={ExplorePage}
+                    />
                   </Router>
                 </AppLayout>
               </LocationProvider>
@@ -97,5 +114,5 @@ export function App({ url }: { url?: string }) {
         </ConfigProvider>
       </WebBridgeProvider>
     </TolgeeProvider>
-  );
+  )
 }

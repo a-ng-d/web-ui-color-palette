@@ -1,23 +1,23 @@
+import { Data as PaletteData } from '@yelbolt/engine-ui-color-palette'
+import { getPalette, setPalette } from '../db'
+import { dispatch, t } from '../context'
 import type {
   BaseConfiguration,
   MetaConfiguration,
   ThemeConfiguration,
-} from "@yelbolt/engine-ui-color-palette";
-import { Data as PaletteData } from "@yelbolt/engine-ui-color-palette";
-import { getPalette, setPalette } from "../db";
-import { dispatch, t } from "../context";
+} from '@yelbolt/engine-ui-color-palette'
 
 interface Msg {
   data: {
-    base: BaseConfiguration;
-    themes: Array<ThemeConfiguration>;
-    meta: MetaConfiguration;
-  };
+    base: BaseConfiguration
+    themes: Array<ThemeConfiguration>
+    meta: MetaConfiguration
+  }
 }
 
 const createPaletteFromRemote = async (msg: Msg) => {
-  const existing = await getPalette(msg.data.meta.id);
-  if (existing) throw new Error(t("error.addToLocal"));
+  const existing = await getPalette(msg.data.meta.id)
+  if (existing) throw new Error(t('error.addToLocal'))
 
   const palette = new PaletteData({
     base: {
@@ -49,10 +49,10 @@ const createPaletteFromRemote = async (msg: Msg) => {
         isPublished: msg.data.meta.publicationStatus.isPublished,
       },
     },
-  }).makePaletteFullData();
+  }).makePaletteFullData()
 
-  await setPalette(palette);
-  dispatch("LOAD_PALETTE", palette);
-};
+  await setPalette(palette)
+  dispatch('LOAD_PALETTE', palette)
+}
 
-export default createPaletteFromRemote;
+export default createPaletteFromRemote

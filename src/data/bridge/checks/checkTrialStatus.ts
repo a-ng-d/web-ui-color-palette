@@ -1,5 +1,5 @@
-import webConfig from '../../webConfig'
 import { dispatch } from '../context'
+import webConfig from '../../webConfig'
 
 const checkTrialStatus = async () => {
   const trialStartDate =

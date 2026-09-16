@@ -1,87 +1,86 @@
-import type { ColorConfiguration } from "@yelbolt/engine-ui-color-palette";
-import { getSupabase } from "ui-ui-color-palette/external/auth";
-import { getPalette } from "./bridge/db";
-import getPalettesOnCurrentPage from "./bridge/gets/getPalettesOnCurrentPage";
-import jumpToPalette from "./bridge/gets/jumpToPalette";
-import createPaletteFromRemote from "./bridge/creations/createPaletteFromRemote";
+import { getSupabase } from 'ui-ui-color-palette/external/auth'
+import webConfig from './webConfig'
+import jumpToPalette from './bridge/gets/jumpToPalette'
+import getPalettesOnCurrentPage from './bridge/gets/getPalettesOnCurrentPage'
+import { getPalette } from './bridge/db'
+import createPaletteFromRemote from './bridge/creations/createPaletteFromRemote'
 import createPaletteFromLink, {
   type SharedPaletteData,
-} from "./bridge/creations/createPaletteFromLink";
-import { dispatch, t } from "./bridge/context";
-import webConfig from "./webConfig";
+} from './bridge/creations/createPaletteFromLink'
+import { dispatch, t } from './bridge/context'
+import type { ColorConfiguration } from '@yelbolt/engine-ui-color-palette'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type RemotePaletteRow = any;
+type RemotePaletteRow = any
 
 type RemoteFetchResult =
-  | { status: "allowed"; row: RemotePaletteRow }
-  | { status: "blocked" }
-  | { status: "not-found" };
+  | { status: 'allowed'; row: RemotePaletteRow }
+  | { status: 'blocked' }
+  | { status: 'not-found' }
 
 const fetchRemotePalette = async (
   id: string,
-  currentUserId: string,
+  currentUserId: string
 ): Promise<RemoteFetchResult> => {
-  const supabase = getSupabase();
-  if (!supabase) return { status: "not-found" };
+  const supabase = getSupabase()
+  if (!supabase) return { status: 'not-found' }
 
   const { data, error } = await supabase
     .from(webConfig.dbs.palettesDbViewName)
-    .select("*")
-    .eq("palette_id", id);
+    .select('*')
+    .eq('palette_id', id)
 
-  if (error || !data || data.length === 0) return { status: "not-found" };
+  if (error || !data || data.length === 0) return { status: 'not-found' }
 
-  const row = data[0];
+  const row = data[0]
 
-  if (row.is_shared === true) return { status: "allowed", row };
+  if (row.is_shared === true) return { status: 'allowed', row }
 
-  const isOwner = Boolean(currentUserId) && row.creator_id === currentUserId;
-  if (isOwner) return { status: "allowed", row };
+  const isOwner = Boolean(currentUserId) && row.creator_id === currentUserId
+  if (isOwner) return { status: 'allowed', row }
 
-  return { status: "blocked" };
-};
+  return { status: 'blocked' }
+}
 
 export type PaletteUrlResolution =
-  | "resolved"
-  | "blocked"
-  | "not-found"
-  | "no-op";
+  | 'resolved'
+  | 'blocked'
+  | 'not-found'
+  | 'no-op'
 
 export const resolvePaletteFromUrl = async (
   search: string,
-  currentUserId: string = "",
+  currentUserId = ''
 ): Promise<PaletteUrlResolution> => {
-  const params = new URLSearchParams(search);
-  const id = params.get("id");
-  const dataParam = params.get("data");
+  const params = new URLSearchParams(search)
+  const id = params.get('id')
+  const dataParam = params.get('data')
 
-  if (!id && !dataParam) return "no-op";
+  if (!id && !dataParam) return 'no-op'
 
   if (id) {
-    const local = await getPalette(id);
+    const local = await getPalette(id)
     if (local) {
-      await jumpToPalette(id);
-      return "resolved";
+      await jumpToPalette(id)
+      return 'resolved'
     }
   }
 
-  if (dataParam) {
+  if (dataParam)
     try {
-      const payload = JSON.parse(dataParam) as SharedPaletteData;
-      await createPaletteFromLink(payload);
-      await getPalettesOnCurrentPage();
-      return "resolved";
+      const payload = JSON.parse(dataParam) as SharedPaletteData
+      await createPaletteFromLink(payload)
+      await getPalettesOnCurrentPage()
+      return 'resolved'
     } catch (error) {
-      console.error("[urlPalette] Malformed data param:", error);
+      console.error('[urlPalette] Malformed data param:', error)
     }
-  }
 
   if (id) {
-    const result = await fetchRemotePalette(id, currentUserId);
+    const result = await fetchRemotePalette(id, currentUserId)
 
-    if (result.status === "allowed") {
-      const remote = result.row;
+    if (result.status === 'allowed') {
+      const remote = result.row
       await createPaletteFromRemote({
         data: {
           base: {
@@ -101,7 +100,7 @@ export const resolvePaletteFromUrl = async (
               createdAt: remote.created_at,
               updatedAt: remote.updated_at,
               publishedAt: remote.published_at,
-              openedAt: "",
+              openedAt: '',
             },
             publicationStatus: {
               isPublished: true,
@@ -114,17 +113,17 @@ export const resolvePaletteFromUrl = async (
             },
           },
         },
-      });
-      await getPalettesOnCurrentPage();
-      return "resolved";
+      })
+      await getPalettesOnCurrentPage()
+      return 'resolved'
     }
 
-    if (result.status === "blocked") return "blocked";
+    if (result.status === 'blocked') return 'blocked'
   }
 
-  dispatch("POST_MESSAGE", {
-    type: "ERROR",
-    message: t("error.unfoundPalette"),
-  });
-  return "not-found";
-};
+  dispatch('POST_MESSAGE', {
+    type: 'ERROR',
+    message: t('error.unfoundPalette'),
+  })
+  return 'not-found'
+}

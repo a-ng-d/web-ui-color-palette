@@ -1,6 +1,6 @@
 import type { ConsentConfiguration } from '@unoff/ui'
-import webConfig from '../../webConfig'
 import { dispatch } from '../context'
+import webConfig from '../../webConfig'
 
 const checkUserConsent = async (userConsent: Array<ConsentConfiguration>) => {
   const currentUserConsentVersion = window.localStorage.getItem(
@@ -17,8 +17,7 @@ const checkUserConsent = async (userConsent: Array<ConsentConfiguration>) => {
 
   dispatch('CHECK_USER_CONSENT', {
     mustUserConsent:
-      currentUserConsentVersion !==
-        webConfig.versions.userConsentVersion ||
+      currentUserConsentVersion !== webConfig.versions.userConsentVersion ||
       currentUserConsentVersion === undefined,
     userConsent: userConsentData,
   })

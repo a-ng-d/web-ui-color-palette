@@ -1,49 +1,49 @@
-import { useEffect } from "preact/hooks";
-import type { ComponentChildren } from "preact";
-import { useTolgee } from "@tolgee/react";
-import type { UserTheme } from "ui-ui-color-palette/types";
-import { $userTheme, getUserConsent } from "ui-ui-color-palette/stores";
-import { initDb } from "./db";
-import { startBridge } from "./loadBridge";
-import { setT } from "./context";
+import { $userTheme, getUserConsent } from 'ui-ui-color-palette/stores'
+import { useEffect } from 'preact/hooks'
+import { useTolgee } from '@tolgee/react'
+import { startBridge } from './loadBridge'
+import { initDb } from './db'
+import { setT } from './context'
+import type { UserTheme } from 'ui-ui-color-palette/types'
+import type { ComponentChildren } from 'preact'
 
-const USER_THEME_VALUES: UserTheme[] = ["light", "dark", "system"];
+const USER_THEME_VALUES: UserTheme[] = ['light', 'dark', 'system']
 
 interface WebBridgeProviderProps {
-  children: ComponentChildren;
+  children: ComponentChildren
 }
 export function WebBridgeProvider({ children }: WebBridgeProviderProps) {
-  const tolgee = useTolgee();
+  const tolgee = useTolgee()
 
   useEffect(() => {
-    setT((key, params) => tolgee.t(key, params as Record<string, string>));
+    setT((key, params) => tolgee.t(key, params as Record<string, string>))
 
-    const storedUserTheme = window.localStorage.getItem("user_theme");
+    const storedUserTheme = window.localStorage.getItem('user_theme')
     if (USER_THEME_VALUES.includes(storedUserTheme as UserTheme))
-      $userTheme.set(storedUserTheme as UserTheme);
+      $userTheme.set(storedUserTheme as UserTheme)
 
     initDb()
       .then(() => startBridge())
       .then(() => {
         window.dispatchEvent(
-          new CustomEvent("pluginMessage", {
+          new CustomEvent('pluginMessage', {
             detail: {
               message: {
                 pluginMessage: {
-                  type: "LOAD_DATA",
+                  type: 'LOAD_DATA',
                   data: { userConsent: getUserConsent(tolgee.t) },
                 },
               },
-              targetOrigin: "*",
+              targetOrigin: '*',
             },
-          }),
-        );
+          })
+        )
       })
       .catch((err) =>
-        console.error("[WebBridgeProvider] Failed to initialise bridge:", err),
-      );
+        console.error('[WebBridgeProvider] Failed to initialise bridge:', err)
+      )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
-  return <>{children}</>;
+  return <>{children}</>
 }

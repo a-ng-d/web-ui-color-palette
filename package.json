@@ -10,7 +10,9 @@
     "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist/server",
     "start": "node --import tsx/esm server.ts",
     "preview": "NODE_ENV=production node --import tsx/esm server.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "npx tsc --noEmit",
+    "lint": "npx eslint ./src --fix --ext .ts,.tsx",
+    "format": "npx prettier './src' --write",
     "typecheck:worker": "tsc -p tsconfig.worker.json",
     "dev:worker": "npm run build && wrangler dev",
     "deploy": "npm run build && wrangler deploy"

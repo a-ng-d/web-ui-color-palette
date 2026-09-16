@@ -1,5 +1,5 @@
-import webConfig from '../../webConfig'
 import { dispatch } from '../context'
+import webConfig from '../../webConfig'
 
 const checkUserPreferences = async () => {
   const isWCAGDisplayed = window.localStorage.getItem('is_wcag_displayed')

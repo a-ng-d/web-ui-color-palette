@@ -1,47 +1,47 @@
-import { useStore } from "@nanostores/preact";
-import { useTolgee, useTranslate } from "@tolgee/react";
-import { Button, SemanticMessage } from "@unoff/ui";
-import type { Language } from "ui-ui-color-palette/types";
-import { $isSuggestedLanguageDisplayed } from "ui-ui-color-palette/stores";
-import { useAppState } from "../data/AppStateContext";
+import { $isSuggestedLanguageDisplayed } from 'ui-ui-color-palette/stores'
+import { Button, SemanticMessage } from '@unoff/ui'
+import { useTolgee, useTranslate } from '@tolgee/react'
+import { useStore } from '@nanostores/preact'
+import { useAppState } from '../data/AppStateContext'
+import type { Language } from 'ui-ui-color-palette/types'
 
 const LANGUAGE_SUGGESTION_KEYS: Partial<Record<Language, string>> = {
-  "en-US": "en",
-  "pt-BR": "pt",
-  "fr-FR": "fr",
-  "zh-Hans-CN": "zh",
-  "es-ES": "es",
-  "ja-JP": "ja",
-  "ko-KR": "ko",
-};
+  'en-US': 'en',
+  'pt-BR': 'pt',
+  'fr-FR': 'fr',
+  'zh-Hans-CN': 'zh',
+  'es-ES': 'es',
+  'ja-JP': 'ja',
+  'ko-KR': 'ko',
+}
 
 export function LanguageSuggestionBanner() {
-  const { state, setState } = useAppState();
-  const isDisplayed = useStore($isSuggestedLanguageDisplayed);
-  const tolgee = useTolgee();
-  const { t } = useTranslate();
+  const { state, setState } = useAppState()
+  const isDisplayed = useStore($isSuggestedLanguageDisplayed)
+  const tolgee = useTolgee()
+  const { t } = useTranslate()
 
-  if (!isDisplayed || !state.suggestedLanguage) return null;
+  if (!isDisplayed || !state.suggestedLanguage) return null
 
-  const langCode = LANGUAGE_SUGGESTION_KEYS[state.suggestedLanguage];
-  if (!langCode) return null;
+  const langCode = LANGUAGE_SUGGESTION_KEYS[state.suggestedLanguage]
+  if (!langCode) return null
 
   const dismiss = () => {
-    setState({ suggestedLanguage: null });
-    $isSuggestedLanguageDisplayed.set(false);
-    window.localStorage.setItem("is_suggested_language_displayed", "false");
-  };
+    setState({ suggestedLanguage: null })
+    $isSuggestedLanguageDisplayed.set(false)
+    window.localStorage.setItem('is_suggested_language_displayed', 'false')
+  }
 
   const accept = () => {
-    const language = state.suggestedLanguage;
-    if (!language) return;
+    const language = state.suggestedLanguage
+    if (!language) return
 
     tolgee.changeLanguage(language).then(() => {
-      document.documentElement.setAttribute("lang", language);
-    });
-    window.localStorage.setItem("user_language", language);
-    dismiss();
-  };
+      document.documentElement.setAttribute('lang', language)
+    })
+    window.localStorage.setItem('user_language', language)
+    dismiss()
+  }
 
   return (
     <SemanticMessage
@@ -54,10 +54,14 @@ export function LanguageSuggestionBanner() {
             label={t(`user.language.suggestion.${langCode}.cta`)}
             action={accept}
           />
-          <Button type="icon" icon="close" action={dismiss} />
+          <Button
+            type="icon"
+            icon="close"
+            action={dismiss}
+          />
         </>
       }
       isAnchored
     />
-  );
+  )
 }

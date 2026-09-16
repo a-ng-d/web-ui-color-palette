@@ -1,7 +1,7 @@
 import { hydrate } from 'preact-iso'
+import { initExternals } from './data/externals'
 import { App } from './App'
-import { initExternals } from "./data/externals";
 
-initExternals();
+initExternals()
 
 hydrate(<App />, document.getElementById('root')!)

@@ -1,21 +1,19 @@
-import { createPortal } from "preact/compat";
-import { WithConfig, WithTranslation } from "ui-ui-color-palette/ui/components";
-import { Modal } from "ui-ui-color-palette/ui/contexts";
-import { useAppState } from "../data/AppStateContext";
+import { Modal } from 'ui-ui-color-palette/ui/contexts'
+import { WithConfig, WithTranslation } from 'ui-ui-color-palette/ui/components'
+import { createPortal } from 'preact/compat'
+import { useAppState } from '../data/AppStateContext'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const WrappedModal = WithConfig(
-  WithTranslation(Modal as any) as any,
-) as any;
+const WrappedModal = WithConfig(WithTranslation(Modal as any) as any) as any
 
 export function ModalHost() {
-  const { state, setState } = useAppState();
+  const { state, setState } = useAppState()
 
-  if (state.modalContext === "EMPTY") return null;
+  if (state.modalContext === 'EMPTY') return null
 
   const target =
-    typeof document !== "undefined" ? document.getElementById("modal") : null;
-  if (!target) return null;
+    typeof document !== 'undefined' ? document.getElementById('modal') : null
+  if (!target) return null
 
   return createPortal(
     <WrappedModal
@@ -27,14 +25,14 @@ export function ModalHost() {
       onSubscribe={setState}
       onClose={() =>
         setState({
-          modalContext: "EMPTY",
+          modalContext: 'EMPTY',
           announcements: {
             version: state.announcements.version,
-            status: "NO_ANNOUNCEMENTS",
+            status: 'NO_ANNOUNCEMENTS',
           },
         })
       }
     />,
-    target,
-  );
+    target
+  )
 }

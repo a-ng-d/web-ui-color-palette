@@ -19,7 +19,9 @@
   align-items: stretch;
   gap: var(--scale-pos-xunit);
   width: 200px;
-  --bar-padding: var(--layout-block-padding-top) var(--layout-block-padding-right) var(--layout-block-padding-bottom) var(--layout-block-padding-left);
+  --bar-padding: var(--layout-block-padding-top)
+    var(--layout-block-padding-right) var(--layout-block-padding-bottom)
+    var(--layout-block-padding-left);
 }
 
 .main-navigation__nav {
@@ -55,27 +57,27 @@
   }
 
   .main-navigation__shortcuts .pro-zone .text-button {
-    padding: 0;
     justify-content: center;
+    padding: 0;
   }
 }
 
 /* Manage page */
 .web-manage-page {
-  position: relative;
-  height: 100%;
   display: flex;
+  position: relative;
   flex-direction: column;
+  height: 100%;
 }
 .web-access-denied {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
   display: flex;
-  align-items: center;
+  position: absolute;
   justify-content: center;
-  padding: var(--scale-pos-xsmall, 16px);
+  align-items: center;
+  z-index: 20;
+  inset: 0;
   background-color: var(--global-background-color-default);
+  padding: var(--scale-pos-xsmall, 16px);
 }
 
 .web-access-denied > * {

@@ -1,27 +1,5 @@
-import { createContext } from 'preact'
-import { useContext, useRef, useState, useEffect } from 'preact/hooks'
-import type { ComponentChildren, RefObject } from 'preact'
-import { useTolgee } from '@tolgee/react'
 import type { ConsentConfiguration } from '@unoff/ui'
-import type {
-  AnnouncementsDigest,
-  BaseProps,
-  Language,
-  LicenseTrigger,
-  ModalContext,
-  NotificationMessage,
-  PlanStatus,
-  Service,
-  Editor,
-  PalettesView,
-  UserTheme,
-} from 'ui-ui-color-palette/types'
-import type { ManagePalette } from 'ui-ui-color-palette/ui/services'
-import { getSupabase, fetchUserEntitlements } from 'ui-ui-color-palette/external/auth'
-import { checkAnnouncementsVersion } from 'ui-ui-color-palette/external/cms'
-import { validateUserLicenseKey } from 'ui-ui-color-palette/external/license'
 import isValidPaletteConfiguration from 'ui-ui-color-palette/utils/isValidPaletteConfiguration'
-import webConfig from './webConfig'
 import {
   $canStylesDeepSync,
   $canTokensDeepSync,
@@ -37,7 +15,32 @@ import {
   $userTheme,
   updateUserConsentWithData,
 } from 'ui-ui-color-palette/stores'
-import { restoreSession, signInWithOAuth, signOutWeb } from "./webAuth";
+import { validateUserLicenseKey } from 'ui-ui-color-palette/external/license'
+import { checkAnnouncementsVersion } from 'ui-ui-color-palette/external/cms'
+import {
+  getSupabase,
+  fetchUserEntitlements,
+} from 'ui-ui-color-palette/external/auth'
+import { useContext, useRef, useState, useEffect } from 'preact/hooks'
+import { createContext } from 'preact'
+import { useTolgee } from '@tolgee/react'
+import webConfig from './webConfig'
+import { restoreSession, signInWithOAuth, signOutWeb } from './webAuth'
+import type { ManagePalette } from 'ui-ui-color-palette/ui/services'
+import type {
+  AnnouncementsDigest,
+  BaseProps,
+  Language,
+  LicenseTrigger,
+  ModalContext,
+  NotificationMessage,
+  PlanStatus,
+  Service,
+  Editor,
+  PalettesView,
+  UserTheme,
+} from 'ui-ui-color-palette/types'
+import type { ComponentChildren, RefObject } from 'preact'
 
 const LANGUAGE_MAPPING: Partial<Record<string, Language>> = {
   'en-US': 'en-US',
@@ -59,8 +62,7 @@ const LANGUAGE_MAPPING: Partial<Record<string, Language>> = {
 const detectSuggestedLanguage = (userLanguage: Language): Language | null => {
   const browserLang = navigator.language
   const suggested =
-    LANGUAGE_MAPPING[browserLang] ??
-    LANGUAGE_MAPPING[browserLang.split('-')[0]]
+    LANGUAGE_MAPPING[browserLang] ?? LANGUAGE_MAPPING[browserLang.split('-')[0]]
 
   return suggested && suggested !== userLanguage ? suggested : null
 }
@@ -91,51 +93,53 @@ export type WebAppState = Pick<
 }
 
 const defaultAppState: WebAppState = {
-  service: "MANAGE" as Service,
+  service: 'MANAGE' as Service,
   userSession: {
-    connectionStatus: "UNCONNECTED",
-    userId: "",
-    userFullName: "",
-    userAvatar: "",
+    connectionStatus: 'UNCONNECTED',
+    userId: '',
+    userFullName: '',
+    userAvatar: '',
   },
   userIdentity: {
-    id: "",
-    fullName: "",
-    avatar: "",
+    id: '',
+    fullName: '',
+    avatar: '',
   },
   userConsent: [],
-  planStatus: "UNPAID" as PlanStatus,
-  trialStatus: "UNUSED",
+  planStatus: 'UNPAID' as PlanStatus,
+  trialStatus: 'UNUSED',
   trialRemainingTime: 72,
   creditsCount: 0,
   creditsRenewalDate: 0,
-  editor: "web" as Editor,
+  editor: 'web' as Editor,
   documentWidth:
-    typeof document !== "undefined" ? document.documentElement.clientWidth : 1280,
-  modalContext: "EMPTY",
+    typeof document !== 'undefined'
+      ? document.documentElement.clientWidth
+      : 1280,
+  modalContext: 'EMPTY',
   mustUserConsent: false,
   announcements: {
-    version: "",
-    status: "NO_ANNOUNCEMENTS",
+    version: '',
+    status: 'NO_ANNOUNCEMENTS',
   },
   notification: {
-    type: "INFO",
-    message: "",
+    type: 'INFO',
+    message: '',
     timer: 5000,
   },
-  licenseTrigger: { type: "ACTIVATE" },
-  pricingOrigin: "UNKNOWN",
+  licenseTrigger: { type: 'ACTIVATE' },
+  pricingOrigin: 'UNKNOWN',
   localPalettesCount: 0,
   isAccountSubscribed: false,
   suggestedLanguage: null,
-};
+}
 
 interface AppStateContextType {
-  state: WebAppState;
-  setState: (partial: Partial<WebAppState>) => void;
-  signIn: () => Promise<void>;
-  signOut: () => Promise<void>;
-  managePaletteRef: RefObject<ManagePalette>;
+  state: WebAppState
+  setState: (partial: Partial<WebAppState>) => void
+  signIn: () => Promise<void>
+  signOut: () => Promise<void>
+  managePaletteRef: RefObject<ManagePalette>
 }
 
 const AppStateContext = createContext<AppStateContextType>({
@@ -144,9 +148,13 @@ const AppStateContext = createContext<AppStateContextType>({
   signIn: async () => {},
   signOut: async () => {},
   managePaletteRef: { current: null },
-});
+})
 
-export function AppStateProvider({ children }: { children: ComponentChildren }) {
+export function AppStateProvider({
+  children,
+}: {
+  children: ComponentChildren
+}) {
   const [state, setStateFull] = useState<WebAppState>(defaultAppState)
   const managePaletteRef = useRef<ManagePalette>(null)
   const tolgee = useTolgee()
@@ -160,7 +168,6 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -178,9 +185,7 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
           $canTokensDeepSync.set(data.canDeepSyncTokens)
           $isSuggestedLanguageDisplayed.set(data.isSuggestedLanguageDisplayed)
           $userTheme.set((data.userTheme ?? 'system') as UserTheme)
-          $palettesView.set(
-            (data.palettesView ?? 'MOSAIC') as PalettesView
-          )
+          $palettesView.set((data.palettesView ?? 'MOSAIC') as PalettesView)
 
           setState({
             suggestedLanguage: detectSuggestedLanguage(data.userLanguage),
@@ -189,7 +194,7 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
           tolgee.changeLanguage(data.userLanguage).then(() => {
             document.documentElement.setAttribute(
               'lang',
-              data.userLanguage ?? tolgee.getLanguage(),
+              data.userLanguage ?? tolgee.getLanguage()
             )
           })
         },
@@ -237,7 +242,9 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
                 ...prev,
                 planStatus: 'PAID',
                 trialStatus:
-                  prev.trialStatus !== 'UNUSED' ? 'SUSPENDED' : prev.trialStatus,
+                  prev.trialStatus !== 'UNUSED'
+                    ? 'SUSPENDED'
+                    : prev.trialStatus,
               }))
             })
             .catch(console.error)
@@ -280,7 +287,7 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
         CHECK_ANNOUNCEMENTS_VERSION: () => {
           checkAnnouncementsVersion(
             webConfig.urls.announcementsWorkerUrl,
-            webConfig.env.announcementsDbId,
+            webConfig.env.announcementsDbId
           )
             .then((version: string) => {
               setStateFull((prev) => ({
@@ -299,7 +306,7 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
                     },
                     targetOrigin: '*',
                   },
-                }),
+                })
               )
             })
             .catch(console.error)
@@ -325,7 +332,6 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
     window.addEventListener('platformMessage', handler as EventListener)
     return () =>
       window.removeEventListener('platformMessage', handler as EventListener)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -334,36 +340,36 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
 
     const applySession = (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      session: any,
+      session: any
     ) => {
-      const userId = session?.user.id ?? "";
+      const userId = session?.user.id ?? ''
       setState({
         userSession: {
-          connectionStatus: "CONNECTED",
+          connectionStatus: 'CONNECTED',
           userId,
           userFullName:
-            session?.user.user_metadata.full_name ?? "Anonymous Palette Wizard",
+            session?.user.user_metadata.full_name ?? 'Anonymous Palette Wizard',
           userAvatar:
             session?.user.user_metadata.avatar_url ??
             `https://www.gravatar.com/avatar/${userId}?d=identicon`,
         },
         userIdentity: {
           id: userId,
-          fullName: session?.user.user_metadata.full_name ?? "",
-          avatar: session?.user.user_metadata.avatar_url ?? "",
+          fullName: session?.user.user_metadata.full_name ?? '',
+          avatar: session?.user.user_metadata.avatar_url ?? '',
         },
-      });
+      })
       if (userId)
         fetchUserEntitlements(userId)
           .then((result) => {
             if (result?.planStatus)
               setState({
                 planStatus: result.planStatus as PlanStatus,
-                isAccountSubscribed: result.planStatus === "PAID",
-              });
+                isAccountSubscribed: result.planStatus === 'PAID',
+              })
           })
-          .catch(console.error);
-    };
+          .catch(console.error)
+    }
 
     const { data: subscription } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -374,32 +380,32 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
             setStateFull((prev) => ({
               ...prev,
               userSession: {
-                connectionStatus: "UNCONNECTED",
-                userId: "",
-                userFullName: "",
-                userAvatar: "",
+                connectionStatus: 'UNCONNECTED',
+                userId: '',
+                userFullName: '',
+                userAvatar: '',
               },
-              userIdentity: { id: "", fullName: "", avatar: "" },
+              userIdentity: { id: '', fullName: '', avatar: '' },
               isAccountSubscribed: false,
-              planStatus: prev.isAccountSubscribed ? "UNPAID" : prev.planStatus,
-            }));
+              planStatus: prev.isAccountSubscribed ? 'UNPAID' : prev.planStatus,
+            }))
           },
-        };
+        }
 
-        actions[event]?.();
-      },
-    );
+        actions[event]?.()
+      }
+    )
 
     restoreSession().then((session) => {
-      if (session) applySession(session);
-    });
+      if (session) applySession(session)
+    })
 
-    return () => subscription?.subscription?.unsubscribe();
+    return () => subscription?.subscription?.unsubscribe()
   }, [])
 
-  const signIn = async () => signInWithOAuth();
+  const signIn = async () => signInWithOAuth()
 
-  const signOut = async () => signOutWeb();
+  const signOut = async () => signOutWeb()
 
   return (
     <AppStateContext.Provider
@@ -407,7 +413,7 @@ export function AppStateProvider({ children }: { children: ComponentChildren }) 
     >
       {children}
     </AppStateContext.Provider>
-  );
+  )
 }
 
 export const useAppState = () => useContext(AppStateContext)
