@@ -2,6 +2,17 @@
   "name": "web-ui-color-palette",
   "version": "5.3.5",
   "private": true,
+  "description": "UI Color Palette is an app that creates, manages, exports, and publishes consistent and accessible color palettes.",
+  "author": "Aurélien Grimaud",
+  "license": "MIT",
+  "repository": "https://github.com/a-ng-d/web-ui-color-palette",
+  "keywords": [
+    "color",
+    "color-scheme",
+    "lch",
+    "color-system",
+    "ui-color"
+  ],
   "type": "module",
   "workspaces": [
     "packages/ui-ui-color-palette"
