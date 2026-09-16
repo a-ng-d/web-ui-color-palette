@@ -96,6 +96,7 @@ export type WebAppState = Pick<
   pricingOrigin: string
   localPalettesCount: number
   suggestedLanguage: Language | null
+  isLoaded: boolean
 }
 
 const defaultAppState: WebAppState = {
@@ -138,6 +139,7 @@ const defaultAppState: WebAppState = {
   localPalettesCount: 0,
   isAccountSubscribed: false,
   suggestedLanguage: null,
+  isLoaded: false,
 }
 
 interface AppStateContextType {
@@ -201,6 +203,8 @@ export function AppStateProvider({
           setState({
             suggestedLanguage: detectSuggestedLanguage(data.userLanguage),
           })
+
+          setTimeout(() => setState({ isLoaded: true }), 2000)
 
           tolgee.changeLanguage(data.userLanguage).then(() => {
             document.documentElement.setAttribute(

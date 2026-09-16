@@ -1,6 +1,13 @@
 import { useLocation } from 'preact-iso'
 import { useEffect } from 'preact/hooks'
-import { commons, yelboltColors, yelboltModes, yelboltTypes } from '@unoff/ui'
+import {
+  commons,
+  Icon,
+  layouts,
+  yelboltColors,
+  yelboltModes,
+  yelboltTypes,
+} from '@unoff/ui'
 import 'ui-ui-color-palette/ui/stylesheets/app.css'
 import './web-layout.css'
 import { useAppState } from '../data/AppStateContext'
@@ -42,6 +49,21 @@ function useServiceSync() {
 export function AppLayout({ children }: AppLayoutProps) {
   useServiceSync()
   const { state } = useAppState()
+
+  if (!state.isLoaded)
+    return (
+      <div
+        id="app"
+        className="web-app"
+      >
+        <div className={layouts.centered}>
+          <Icon
+            type="PICTO"
+            iconName="spinner"
+          />
+        </div>
+      </div>
+    )
 
   return (
     <div
