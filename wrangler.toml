@@ -16,3 +16,12 @@ binding = "ASSETS"
 # binding to exact file matches, which still covers the "/index.html" the
 # worker fetches for its template.
 html_handling = "none"
+
+# `name` and `routes` are inherited from the top level unless redeclared, so
+# both must be set explicitly here or `wrangler deploy --env staging` would
+# deploy over the production Worker and fight it for app.ui-color-palette.com.
+[env.staging]
+name = "web-uicp-staging"
+routes = [
+  { pattern = "dev.ui-color-palette.com", custom_domain = true }
+]
