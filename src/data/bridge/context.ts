@@ -1,9 +1,10 @@
-window.addEventListener("message", (event: MessageEvent) => {
-  if (event.source !== window) return;
-  window.dispatchEvent(
-    new CustomEvent("platformMessage", { detail: event.data }),
-  );
-});
+if (typeof window !== "undefined")
+  window.addEventListener("message", (event: MessageEvent) => {
+    if (event.source !== window) return;
+    window.dispatchEvent(
+      new CustomEvent("platformMessage", { detail: event.data }),
+    );
+  });
 
 export const dispatch = (type: string, data?: unknown): void => {
   window.postMessage(

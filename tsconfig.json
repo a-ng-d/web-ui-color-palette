@@ -22,5 +22,5 @@
     }
   },
   "include": ["src", "server.ts", "env.d.ts"],
-  "exclude": ["dist", "node_modules", "packages"]
+  "exclude": ["dist", "node_modules", "packages", "src/worker.ts"]
 }

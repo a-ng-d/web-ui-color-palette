@@ -3,7 +3,7 @@ import type {
   PaletteData,
 } from "@yelbolt/engine-ui-color-palette";
 
-const DB_NAME = "ui-color-palette-web";
+const DB_NAME = "web-ui-color-palette";
 const DB_VERSION = 1;
 
 let _db: IDBDatabase | null = null;

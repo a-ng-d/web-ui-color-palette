@@ -2,6 +2,7 @@ import { useEffect } from "preact/hooks";
 import { useLocation } from "preact-iso";
 import type { ComponentChildren } from "preact";
 import type { Service } from "ui-ui-color-palette/types";
+import { commons, yelboltColors, yelboltModes, yelboltTypes } from "@unoff/ui";
 import "ui-ui-color-palette/ui/stylesheets/app.css";
 import "./web-layout.css";
 import { Sidebar } from "./Sidebar";
@@ -10,6 +11,11 @@ import { ModalHost } from "./ModalHost";
 import { ConsentHost } from "./ConsentHost";
 import { LanguageSuggestionBanner } from "./LanguageSuggestionBanner";
 import { useAppState } from "../data/AppStateContext";
+
+if (typeof window !== "undefined")
+  (
+    window as unknown as { __unoffThemeTokens: Record<string, unknown> }
+  ).__unoffThemeTokens = { commons, yelboltColors, yelboltModes, yelboltTypes };
 
 interface AppLayoutProps {
   children?: ComponentChildren;

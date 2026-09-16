@@ -5,3 +5,4 @@ tmp/
 .env.*
 .mcp.json
 dist
+.wrangler/

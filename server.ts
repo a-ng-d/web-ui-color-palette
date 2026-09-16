@@ -22,7 +22,7 @@ async function createServer() {
           'utf-8'
         )
         const { render } = await import('./dist/server/entry-server.js' as string)
-        const { html } = await render()
+        const { html } = await render(`http://${req.headers.host ?? "localhost"}${req.originalUrl}`)
 
         res.status(200)
           .set('Content-Type', 'text/html')
@@ -60,7 +60,7 @@ async function createServer() {
         template = await vite.transformIndexHtml(req.url, template)
 
         const { render } = await vite.ssrLoadModule('/src/entry-server.tsx')
-        const { html } = await render()
+        const { html } = await render(`http://${req.headers.host ?? "localhost"}${req.originalUrl}`)
 
         res.status(200)
           .set('Content-Type', 'text/html')

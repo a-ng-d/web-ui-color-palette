@@ -33,10 +33,6 @@ const copyShareLink = async (id: string): Promise<void> => {
 
   try {
     await navigator.clipboard.writeText(link);
-    dispatch("POST_MESSAGE", {
-      type: "INFO",
-      message: t("success.copyLink"),
-    });
   } catch {
     dispatch("POST_MESSAGE", {
       type: "ERROR",

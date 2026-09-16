@@ -11,7 +11,8 @@ export function ConsentHost() {
 
   if (!state.mustUserConsent) return null;
 
-  const target = document.getElementById("modal");
+  const target =
+    typeof document !== "undefined" ? document.getElementById("modal") : null;
   if (!target) return null;
 
   const persistConsent = (consent: Array<ConsentConfiguration>) => {

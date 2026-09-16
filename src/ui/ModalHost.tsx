@@ -13,7 +13,8 @@ export function ModalHost() {
 
   if (state.modalContext === "EMPTY") return null;
 
-  const target = document.getElementById("modal");
+  const target =
+    typeof document !== "undefined" ? document.getElementById("modal") : null;
   if (!target) return null;
 
   return createPortal(

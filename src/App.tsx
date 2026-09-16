@@ -35,24 +35,27 @@ const ExtractPage = lazyRoute(() => import('./pages/extract'))
 const WheelPage   = lazyRoute(() => import('./pages/wheel'))
 const ExplorePage = lazyRoute(() => import('./pages/explore'))
 
-const tolgee = initTolgee(
-  import.meta.env.VITE_TOLGEE_URL ?? '',
-  import.meta.env.VITE_TOLGEE_API_KEY ?? '',
-  'en-US',
-  {
-    'en-US': enUS,
-    'fr-FR': frFR,
-    'pt-BR': ptBR,
-    'zh-Hans-CN': zhHansCN,
-    'es-ES': esES,
-    'ja-JP': jaJP,
-    'ko-KR': koKR,
-  }
-)
+let tolgee: ReturnType<typeof initTolgee> | undefined;
 
-export function App() {
+const getTolgee = () =>
+  (tolgee ??= initTolgee(
+    import.meta.env.VITE_TOLGEE_URL ?? "",
+    import.meta.env.VITE_TOLGEE_API_KEY ?? "",
+    "en-US",
+    {
+      "en-US": enUS,
+      "fr-FR": frFR,
+      "pt-BR": ptBR,
+      "zh-Hans-CN": zhHansCN,
+      "es-ES": esES,
+      "ja-JP": jaJP,
+      "ko-KR": koKR,
+    },
+  ));
+
+export function App({ url }: { url?: string }) {
   return (
-    <TolgeeProvider tolgee={tolgee} fallback="...">
+    <TolgeeProvider tolgee={getTolgee()} fallback="...">
       <WebBridgeProvider>
         <ConfigProvider
           limits={webConfig.limits}
@@ -70,7 +73,7 @@ export function App() {
             mode={webConfig.env.colorMode}
           >
             <AppStateProvider>
-              <LocationProvider>
+              <LocationProvider {...({ url } as { url?: string })}>
                 <AppLayout>
                   <Router>
                     <Route

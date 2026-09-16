@@ -36,7 +36,8 @@ export function NotificationHost() {
       window.removeEventListener("platformMessage", handler as EventListener);
   }, []);
 
-  const target = document.getElementById("toast");
+  const target =
+    typeof document !== "undefined" ? document.getElementById("toast") : null;
   if (!notification || !target) return null;
 
   return createPortal(
