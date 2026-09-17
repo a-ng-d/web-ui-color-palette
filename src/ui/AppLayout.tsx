@@ -69,9 +69,10 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div
       id="app"
       className="web-app"
+      inert={state.modalContext !== 'EMPTY' || state.mustUserConsent}
     >
       <Sidebar />
-      <main inert={state.modalContext !== 'EMPTY' || state.mustUserConsent}>
+      <main>
         {children}
         <LanguageSuggestionBanner />
       </main>

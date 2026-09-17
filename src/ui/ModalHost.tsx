@@ -16,23 +16,25 @@ export function ModalHost() {
   if (!target) return null
 
   return createPortal(
-    <WrappedModal
-      {...state}
-      context={state.modalContext}
-      onChangePublication={setState}
-      onManageLicense={setState}
-      onSkipAndResetPalette={setState}
-      onSubscribe={setState}
-      onClose={() =>
-        setState({
-          modalContext: 'EMPTY',
-          announcements: {
-            version: state.announcements.version,
-            status: 'NO_ANNOUNCEMENTS',
-          },
-        })
-      }
-    />,
+    <div inert={state.mustUserConsent}>
+      <WrappedModal
+        {...state}
+        context={state.modalContext}
+        onChangePublication={setState}
+        onManageLicense={setState}
+        onSkipAndResetPalette={setState}
+        onSubscribe={setState}
+        onClose={() =>
+          setState({
+            modalContext: 'EMPTY',
+            announcements: {
+              version: state.announcements.version,
+              status: 'NO_ANNOUNCEMENTS',
+            },
+          })
+        }
+      />
+    </div>,
     target
   )
 }
