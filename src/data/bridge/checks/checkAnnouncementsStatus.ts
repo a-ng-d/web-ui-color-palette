@@ -1,13 +1,16 @@
+import { $isOnboardingRead } from '@ui-lib/stores'
 import { dispatch } from '../context'
 
 const checkAnnouncementsStatus = (remoteVersion: string) => {
   const localVersion = window.localStorage.getItem('announcements_version')
   const isOnboardingRead = window.localStorage.getItem('is_onboarding_read')
 
+  $isOnboardingRead.set(isOnboardingRead === 'true')
+
   if (localVersion === null && remoteVersion === null)
     return dispatch('PUSH_ANNOUNCEMENTS_STATUS', { status: 'NO_ANNOUNCEMENTS' })
 
-  if (localVersion === null && isOnboardingRead === null)
+  if (localVersion === null && isOnboardingRead !== 'true')
     return dispatch('PUSH_ONBOARDING_STATUS', {
       status: 'DISPLAY_ONBOARDING_DIALOG',
     })

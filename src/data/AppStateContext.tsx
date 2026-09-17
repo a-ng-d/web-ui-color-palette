@@ -15,6 +15,7 @@ import {
   $creditsCount,
   $isAPCADisplayed,
   $isAPCAIntervalDisplayed,
+  $isOnboardingRead,
   $isSuggestedLanguageDisplayed,
   $isWCAGDisplayed,
   $isWCAGIntervalDisplayed,
@@ -197,6 +198,7 @@ export function AppStateProvider({
           $canVariablesDeepSync.set(data.canDeepSyncVariables)
           $canTokensDeepSync.set(data.canDeepSyncTokens)
           $isSuggestedLanguageDisplayed.set(data.isSuggestedLanguageDisplayed)
+          $isOnboardingRead.set(data.isOnboardingRead)
           $userTheme.set((data.userTheme ?? 'system') as UserTheme)
           $palettesView.set((data.palettesView ?? 'MOSAIC') as PalettesView)
 
@@ -338,6 +340,19 @@ export function AppStateProvider({
               status: data.status,
             },
           }))
+        },
+        PUSH_ONBOARDING_STATUS: () => {
+          const isOnboardingActive =
+            webConfig.features.find(
+              (feature) => feature.name === 'HELP_ONBOARDING_AUTO_DISPLAY'
+            )?.isActive ?? true
+
+          setState({
+            modalContext:
+              data.status === 'DISPLAY_ONBOARDING_DIALOG' && isOnboardingActive
+                ? 'ONBOARDING'
+                : 'EMPTY',
+          })
         },
       }
 
