@@ -1,5 +1,7 @@
 # Web Ui Color Palette
 
+[![Release production version](https://github.com/a-ng-d/web-ui-color-palette/actions/workflows/release.yml/badge.svg)](https://github.com/a-ng-d/web-ui-color-palette/actions/workflows/release.yml)
+
 A minimal Remix application starter with a home page.
 
 ## Starter Shape
