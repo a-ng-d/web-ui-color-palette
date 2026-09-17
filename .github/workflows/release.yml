@@ -1,0 +1,44 @@
+name: Release production version
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - prod
+  workflow_dispatch:
+
+jobs:
+  create-release:
+    name: Create release
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/ui-color-palette/')
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Extract package version
+      id: extract_version
+      run: |
+        package_version=$(jq -r '.version' package.json)
+        echo "package_version=$package_version" >> $GITHUB_OUTPUT
+
+    - name: Remove dots from version
+      id: remove_dot_version
+      run: |
+        version_nopoint=$(echo "${{ steps.extract_version.outputs.package_version }}" | tr -d '.')
+        echo "version_nopoint=$version_nopoint" >> $GITHUB_OUTPUT
+
+    - name: Create release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.extract_version.outputs.package_version }}
+        release_name: ${{ github.event.pull_request.title }}
+        body: |
+          ## What's Changed
+          [Friendly release note](https://ui-color-palette.canny.io/changelog/ui-color-palette-${{ steps.remove_dot_version.outputs.version_nopoint }})
