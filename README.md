@@ -31,10 +31,9 @@ Go to the `Issues` section and browse the existing tickets or create a new one.
 - _Let's do this_
 
 ### Preview
-Every branch pushed to GitHub gets its own live deployment automatically, built and deployed by Cloudflare:
-- `dev` deploys to [preview-dev.ui-color-palette.com](https://preview-dev.ui-color-palette.com)
-- any other branch (including `release/**`) deploys to `preview-<branch-slug>.ui-color-palette.com`
-- merging a `release/**` branch into `prod` ships to production at [app.ui-color-palette.com](https://app.ui-color-palette.com)
+Every branch pushed to GitHub gets built by Cloudflare automatically:
+- `prod` deploys to production at [app.ui-color-palette.com](https://app.ui-color-palette.com)
+- any other branch (`dev`, `release/**`, or a feature branch) gets a preview version instead — Cloudflare posts its `*.workers.dev` preview URL as a comment on the associated Pull Request
 
 ---
 
