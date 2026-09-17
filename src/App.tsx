@@ -1,4 +1,5 @@
-import { Router, Route, LocationProvider } from 'preact-iso'
+import { Router, Route, LocationProvider, useLocation } from 'preact-iso'
+import { useEffect } from 'preact/hooks'
 import { lazy, Suspense } from 'preact/compat'
 import { initTolgee } from '@ui-lib/external/translation'
 import zhHansCN from '@ui-lib/content/translations/zh-Hans-CN.json'
@@ -36,6 +37,16 @@ const GenPage = lazyRoute(() => import('./pages/gen'))
 const ExtractPage = lazyRoute(() => import('./pages/extract'))
 const WheelPage = lazyRoute(() => import('./pages/wheel'))
 const ExplorePage = lazyRoute(() => import('./pages/explore'))
+
+function RootRedirect() {
+  const { route } = useLocation()
+
+  useEffect(() => {
+    route('/manage', true)
+  }, [route])
+
+  return null
+}
 
 let tolgee: ReturnType<typeof initTolgee> | undefined
 
@@ -83,11 +94,7 @@ export function App({ url }: { url?: string }) {
                   <Router>
                     <Route
                       path="/"
-                      component={() => {
-                        if (typeof window !== 'undefined')
-                          window.location.replace('/manage')
-                        return null
-                      }}
+                      component={RootRedirect}
                     />
                     <Route
                       path="/manage"

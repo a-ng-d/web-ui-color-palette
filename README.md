@@ -1,4 +1,4 @@
-![GitHub package.json version](https://img.shields.io/github/package-json/v/a-ng-d/web-ui-color-palette?color=informational) ![GitHub last commit](https://img.shields.io/github/last-commit/a-ng-d/web-ui-color-palette?color=informational) ![GitHub](https://img.shields.io/github/license/a-ng-d/web-ui-color-palette?color=informational) [![Release production version](https://github.com/a-ng-d/web-ui-color-palette/actions/workflows/release.yml/badge.svg)](https://github.com/a-ng-d/web-ui-color-palette/actions/workflows/release.yml)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/a-ng-d/web-ui-color-palette?color=informational) ![GitHub last commit](https://img.shields.io/github/last-commit/a-ng-d/web-ui-color-palette?color=informational) ![GitHub](https://img.shields.io/github/license/a-ng-d/web-ui-color-palette?color=informational) [![Release production version](https://github.com/a-ng-d/web-ui-color-palette/actions/workflows/release.yml/badge.svg)](https://github.com/a-ng-d/web-ui-color-palette/actions/workflows/release.yml) ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Workers-F38020?logo=cloudflare&logoColor=white) ![Worker status](https://img.shields.io/website?url=https%3A%2F%web-uicp.yelbolt.workers.dev&label=status&up_message=online&down_message=offline)
 
 # UI Color Palette Web App
 
@@ -31,10 +31,9 @@ Go to the `Issues` section and browse the existing tickets or create a new one.
 - _Let's do this_
 
 ### Preview
-Every branch pushed to GitHub gets its own live deployment automatically, built and deployed by Cloudflare:
-- `dev` deploys to [dev.preview.ui-color-palette.com](https://dev.preview.ui-color-palette.com)
-- any other branch (including `release/**`) deploys to `<branch-slug>.preview.ui-color-palette.com`
-- merging a `release/**` branch into `prod` ships to production at [app.ui-color-palette.com](https://app.ui-color-palette.com)
+Every branch pushed to GitHub gets built by Cloudflare automatically:
+- `prod` deploys to production at [app.ui-color-palette.com](https://app.ui-color-palette.com)
+- any other branch (`dev`, `release/**`, or a feature branch) gets a preview version instead — Cloudflare posts its `*.workers.dev` preview URL as a comment on the associated Pull Request
 
 ---
 
