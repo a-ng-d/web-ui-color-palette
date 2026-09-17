@@ -75,6 +75,7 @@ export function Sidebar() {
             {...state}
             announcements={{ version: '', status: 'NO_ANNOUNCEMENTS' }}
             orientation="VERTICAL"
+            tag="beta"
             onSignIn={signIn}
             onSignOut={signOut}
             onReOpenAnnouncements={setState}
