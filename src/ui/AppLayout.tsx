@@ -8,6 +8,7 @@ import {
   yelboltModes,
   yelboltTypes,
 } from '@unoff/ui'
+import { useTranslate } from '@tolgee/react'
 import '@ui-lib/ui/stylesheets/app.css'
 import './web-layout.css'
 import { useAppState } from '../data/AppStateContext'
@@ -37,9 +38,26 @@ const SERVICE_BY_PATH: Record<string, Service> = {
   '/explore': 'EXPLORE',
 }
 
+const TITLE_KEY_BY_PATH: Record<string, string> = {
+  '/': 'services.manage',
+  '/manage': 'services.manage',
+  '/gen': 'services.generate',
+  '/extract': 'services.extract',
+  '/wheel': 'services.wheel',
+  '/explore': 'services.explore',
+}
+
+const SITE_NAME = 'UI Color Palette'
+
 function useServiceSync() {
   const { path } = useLocation()
   const { setState } = useAppState()
+  const { t } = useTranslate()
+
+  useEffect(() => {
+    const key = TITLE_KEY_BY_PATH[path]
+    document.title = key ? `${t(key)} – ${SITE_NAME}` : SITE_NAME
+  }, [path, t])
 
   useEffect(() => {
     setState({ service: SERVICE_BY_PATH[path] ?? 'MANAGE' })
