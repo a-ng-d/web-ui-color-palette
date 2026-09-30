@@ -31,7 +31,7 @@ interface AppLayoutProps {
 
 const SERVICE_BY_PATH: Record<string, Service> = {
   '/': 'MANAGE',
-  '/manage': 'MANAGE',
+  '/palettes': 'MANAGE',
   '/gen': 'GEN',
   '/extract': 'EXTRACT',
   '/wheel': 'WHEEL',
@@ -40,7 +40,7 @@ const SERVICE_BY_PATH: Record<string, Service> = {
 
 const TITLE_KEY_BY_PATH: Record<string, string> = {
   '/': 'services.manage',
-  '/manage': 'services.manage',
+  '/palettes': 'services.manage',
   '/gen': 'services.generate',
   '/extract': 'services.extract',
   '/wheel': 'services.wheel',

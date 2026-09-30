@@ -107,7 +107,7 @@ const handleBridgeMessage = async (path: any) => {
     // Creations
     CREATE_PALETTE: () =>
       createPalette(path)
-        .then((id) => navigate(`/manage?id=${id}`))
+        .then((id) => navigate(`/palettes?id=${id}`))
         .catch((error) =>
           dispatch('POST_MESSAGE', { type: 'ERROR', message: error.message })
         )

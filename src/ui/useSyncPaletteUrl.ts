@@ -14,13 +14,13 @@ export function useSyncPaletteUrl() {
 
     if (!id) {
       if (!hadId) return
-      if (current === '/manage') return
+      if (current === '/palettes') return
 
-      window.history.replaceState(null, '', '/manage')
+      window.history.replaceState(null, '', '/palettes')
       return
     }
 
-    const next = `/manage?id=${encodeURIComponent(id)}`
+    const next = `/palettes?id=${encodeURIComponent(id)}`
     if (next === current) return
 
     window.history.replaceState(null, '', next)

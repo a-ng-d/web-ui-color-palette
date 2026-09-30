@@ -1,7 +1,7 @@
-import * as fs from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import * as path from 'node:path'
 import * as http from 'node:http'
-import { fileURLToPath } from 'node:url'
+import * as fs from 'node:fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isProd = process.env.NODE_ENV === 'production'
@@ -13,7 +13,9 @@ async function createServer() {
     const { default: express } = await import('express')
     const app = express()
 
-    app.use(express.static(path.resolve(__dirname, 'dist/client'), { index: false }))
+    app.use(
+      express.static(path.resolve(__dirname, 'dist/client'), { index: false })
+    )
 
     app.use(async (req, res) => {
       try {
@@ -21,10 +23,15 @@ async function createServer() {
           path.resolve(__dirname, 'dist/client/index.html'),
           'utf-8'
         )
-        const { render } = await import('./dist/server/entry-server.js' as string)
-        const { html } = await render(`http://${req.headers.host ?? "localhost"}${req.originalUrl}`)
+        const { render } = await import(
+          './dist/server/entry-server.js' as string
+        )
+        const { html } = await render(
+          `http://${req.headers.host ?? 'localhost'}${req.originalUrl}`
+        )
 
-        res.status(200)
+        res
+          .status(200)
           .set('Content-Type', 'text/html')
           .end(template.replace('<!--app-->', html))
       } catch (err) {
@@ -60,9 +67,12 @@ async function createServer() {
         template = await vite.transformIndexHtml(req.url, template)
 
         const { render } = await vite.ssrLoadModule('/src/entry-server.tsx')
-        const { html } = await render(`http://${req.headers.host ?? "localhost"}${req.originalUrl}`)
+        const { html } = await render(
+          `http://${req.headers.host ?? 'localhost'}${req.originalUrl}`
+        )
 
-        res.status(200)
+        res
+          .status(200)
           .set('Content-Type', 'text/html')
           .end(template.replace('<!--app-->', html))
       } catch (err) {

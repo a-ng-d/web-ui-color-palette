@@ -15,7 +15,7 @@ export const buildShareLink = (palette: FullConfiguration): string => {
     data: JSON.stringify(payload),
   })
 
-  return `${window.location.origin}/manage?${params.toString()}`
+  return `${window.location.origin}/palettes?${params.toString()}`
 }
 
 const copyShareLink = async (id: string): Promise<void> => {

@@ -42,7 +42,7 @@ function RootRedirect() {
   const { route } = useLocation()
 
   useEffect(() => {
-    route('/manage', true)
+    route('/palettes', true)
   }, [route])
 
   return null
@@ -97,7 +97,7 @@ export function App({ url }: { url?: string }) {
                       component={RootRedirect}
                     />
                     <Route
-                      path="/manage"
+                      path="/palettes"
                       component={ManagePage}
                     />
                     <Route
