@@ -19,14 +19,15 @@ export function Sidebar() {
   const isCompact = useCompactLayout()
   const { t } = useTranslate()
 
-  const activeTab = path === '/' ? '/palettes' : path
+  const activeTab = path.startsWith('/colors')
+    ? '/colors'
+    : path === '/'
+      ? '/palettes'
+      : path
 
   const NAV_ITEMS: Array<{ path: string; icon: IconList; label: string }> = [
     { path: '/palettes', icon: 'colors', label: t('services.manage') },
-    { path: '/gen', icon: 'ai', label: t('services.generate') },
-    { path: '/extract', icon: 'image', label: t('services.extract') },
-    { path: '/wheel', icon: 'list-tile', label: t('services.wheel') },
-    { path: '/explore', icon: 'explore', label: t('services.explore') },
+    { path: '/colors', icon: 'styles', label: t('services.combine') },
   ]
 
   return (
@@ -47,7 +48,7 @@ export function Sidebar() {
                 icon={icon}
                 state={href === activeTab ? 'selected' : 'default'}
                 helper={{ label }}
-                action={() => route(href)}
+                action={() => route(href === '/colors' ? '/colors/gen' : href)}
               />
             ))
           ) : (
@@ -63,7 +64,7 @@ export function Sidebar() {
               action={(event: Event) => {
                 const href = (event.currentTarget as HTMLElement | null)
                   ?.dataset.feature
-                if (href) route(href)
+                if (href) route(href === '/colors' ? '/colors/gen' : href)
               }}
             />
           )}

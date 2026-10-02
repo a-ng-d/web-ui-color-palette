@@ -33,20 +33,25 @@ function lazyRoute<T extends Record<string, unknown>>(
 }
 
 const ManagePage = lazyRoute(() => import('./pages/manage'))
-const GenPage = lazyRoute(() => import('./pages/gen'))
-const ExtractPage = lazyRoute(() => import('./pages/extract'))
-const WheelPage = lazyRoute(() => import('./pages/wheel'))
-const ExplorePage = lazyRoute(() => import('./pages/explore'))
+const CombinePage = lazyRoute(() => import('./pages/combine'))
 
-function RootRedirect() {
-  const { route } = useLocation()
+function redirectTo(target: string) {
+  return function Redirect() {
+    const { route } = useLocation()
 
-  useEffect(() => {
-    route('/palettes', true)
-  }, [route])
+    useEffect(() => {
+      route(target, true)
+    }, [route])
 
-  return null
+    return null
+  }
 }
+
+const RootRedirect = redirectTo('/palettes')
+const GenRedirect = redirectTo('/colors/gen')
+const ExtractRedirect = redirectTo('/colors/extract')
+const WheelRedirect = redirectTo('/colors/wheel')
+const ExploreRedirect = redirectTo('/colors/explore')
 
 let tolgee: ReturnType<typeof initTolgee> | undefined
 
@@ -101,20 +106,24 @@ export function App({ url }: { url?: string }) {
                       component={ManagePage}
                     />
                     <Route
+                      path="/colors/:context?"
+                      component={CombinePage}
+                    />
+                    <Route
                       path="/gen"
-                      component={GenPage}
+                      component={GenRedirect}
                     />
                     <Route
                       path="/extract"
-                      component={ExtractPage}
+                      component={ExtractRedirect}
                     />
                     <Route
                       path="/wheel"
-                      component={WheelPage}
+                      component={WheelRedirect}
                     />
                     <Route
                       path="/explore"
-                      component={ExplorePage}
+                      component={ExploreRedirect}
                     />
                   </Router>
                 </AppLayout>

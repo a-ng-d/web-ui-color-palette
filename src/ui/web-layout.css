@@ -62,6 +62,13 @@
   }
 }
 
+/* Combine page */
+.web-combine-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 /* Manage page */
 .web-manage-page {
   display: flex;

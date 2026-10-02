@@ -1,5 +1,5 @@
 import { useLocation } from 'preact-iso'
-import { useEffect } from 'preact/hooks'
+import { useEffect, useRef } from 'preact/hooks'
 import {
   commons,
   Icon,
@@ -32,26 +32,29 @@ interface AppLayoutProps {
 const SERVICE_BY_PATH: Record<string, Service> = {
   '/': 'MANAGE',
   '/palettes': 'MANAGE',
-  '/gen': 'GEN',
-  '/extract': 'EXTRACT',
-  '/wheel': 'WHEEL',
-  '/explore': 'EXPLORE',
+  '/colors': 'COMBINE',
+  '/colors/gen': 'COMBINE',
+  '/colors/extract': 'COMBINE',
+  '/colors/wheel': 'COMBINE',
+  '/colors/explore': 'COMBINE',
 }
 
 const TITLE_KEY_BY_PATH: Record<string, string> = {
   '/': 'services.manage',
   '/palettes': 'services.manage',
-  '/gen': 'services.generate',
-  '/extract': 'services.extract',
-  '/wheel': 'services.wheel',
-  '/explore': 'services.explore',
+  '/colors': 'services.combine',
+  '/colors/gen': 'services.generate',
+  '/colors/extract': 'services.extract',
+  '/colors/wheel': 'services.wheel',
+  '/colors/explore': 'services.explore',
 }
 
 const SITE_NAME = 'UI Color Palette'
 
 function useServiceSync() {
-  const { path } = useLocation()
-  const { setState } = useAppState()
+  const { path, route } = useLocation()
+  const { state, setState } = useAppState()
+  const previousService = useRef(state.service)
   const { t } = useTranslate()
 
   useEffect(() => {
@@ -62,6 +65,13 @@ function useServiceSync() {
   useEffect(() => {
     setState({ service: SERVICE_BY_PATH[path] ?? 'MANAGE' })
   }, [path, setState])
+
+  useEffect(() => {
+    const wasCombine = previousService.current === 'COMBINE'
+    previousService.current = state.service
+    if (wasCombine && state.service === 'MANAGE' && path.startsWith('/colors'))
+      route('/palettes')
+  }, [state.service, path, route])
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
