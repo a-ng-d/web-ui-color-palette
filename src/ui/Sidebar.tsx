@@ -21,9 +21,18 @@ export function Sidebar() {
 
   const activeTab = path.startsWith('/colors')
     ? '/colors'
-    : path === '/'
+    : path === '/' || path.startsWith('/palettes')
       ? '/palettes'
       : path
+
+  const navigateTo = (href: string) =>
+    route(
+      href === '/colors'
+        ? '/colors/gen'
+        : href === '/palettes'
+          ? '/palettes/local'
+          : href
+    )
 
   const NAV_ITEMS: Array<{ path: string; icon: IconList; label: string }> = [
     { path: '/palettes', icon: 'colors', label: t('services.manage') },
@@ -48,7 +57,7 @@ export function Sidebar() {
                 icon={icon}
                 state={href === activeTab ? 'selected' : 'default'}
                 helper={{ label }}
-                action={() => route(href === '/colors' ? '/colors/gen' : href)}
+                action={() => navigateTo(href)}
               />
             ))
           ) : (
@@ -64,7 +73,7 @@ export function Sidebar() {
               action={(event: Event) => {
                 const href = (event.currentTarget as HTMLElement | null)
                   ?.dataset.feature
-                if (href) route(href === '/colors' ? '/colors/gen' : href)
+                if (href) navigateTo(href)
               }}
             />
           )}

@@ -1,3 +1,4 @@
+import { uid } from 'uid'
 import { Data as PaletteData } from '@yelbolt/engine-ui-color-palette'
 import { getPalette, setPalette } from '../db'
 import { dispatch, t } from '../context'
@@ -13,8 +14,11 @@ export interface SharedPaletteData {
   meta: MetaConfiguration
 }
 
+const RESERVED_IDS = ['local', 'library']
+
 const createPaletteFromLink = async (payload: SharedPaletteData) => {
-  const existing = await getPalette(payload.meta.id)
+  const id = RESERVED_IDS.includes(payload.meta.id) ? uid() : payload.meta.id
+  const existing = await getPalette(id)
   if (existing) throw new Error(t('error.addToLocal'))
 
   const now = new Date().toISOString()
@@ -23,7 +27,7 @@ const createPaletteFromLink = async (payload: SharedPaletteData) => {
     base: payload.base,
     themes: payload.themes,
     meta: {
-      id: payload.meta.id,
+      id,
       dates: {
         createdAt: payload.meta.dates?.createdAt || now,
         updatedAt: now,

@@ -11,11 +11,10 @@ export const buildShareLink = (palette: FullConfiguration): string => {
   }
 
   const params = new URLSearchParams({
-    id: palette.meta.id,
     data: JSON.stringify(payload),
   })
 
-  return `${window.location.origin}/palettes?${params.toString()}`
+  return `${window.location.origin}/palettes/${encodeURIComponent(palette.meta.id)}?${params.toString()}`
 }
 
 const copyShareLink = async (id: string): Promise<void> => {

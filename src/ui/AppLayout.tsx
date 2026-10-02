@@ -49,6 +49,9 @@ const TITLE_KEY_BY_PATH: Record<string, string> = {
   '/colors/explore': 'services.explore',
 }
 
+const getServiceKey = (path: string) =>
+  path === '/palettes' || path.startsWith('/palettes/') ? '/palettes' : path
+
 const SITE_NAME = 'UI Color Palette'
 
 function useServiceSync() {
@@ -58,19 +61,19 @@ function useServiceSync() {
   const { t } = useTranslate()
 
   useEffect(() => {
-    const key = TITLE_KEY_BY_PATH[path]
+    const key = TITLE_KEY_BY_PATH[getServiceKey(path)]
     document.title = key ? `${t(key)} – ${SITE_NAME}` : SITE_NAME
   }, [path, t])
 
   useEffect(() => {
-    setState({ service: SERVICE_BY_PATH[path] ?? 'MANAGE' })
+    setState({ service: SERVICE_BY_PATH[getServiceKey(path)] ?? 'MANAGE' })
   }, [path, setState])
 
   useEffect(() => {
     const wasCombine = previousService.current === 'COMBINE'
     previousService.current = state.service
     if (wasCombine && state.service === 'MANAGE' && path.startsWith('/colors'))
-      route('/palettes')
+      route('/palettes/local')
   }, [state.service, path, route])
 }
 

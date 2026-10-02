@@ -49,11 +49,11 @@ export type PaletteUrlResolution =
   | 'no-op'
 
 export const resolvePaletteFromUrl = async (
+  id: string,
   search: string,
   currentUserId = ''
 ): Promise<PaletteUrlResolution> => {
   const params = new URLSearchParams(search)
-  const id = params.get('id')
   const dataParam = params.get('data')
 
   if (!id && !dataParam) return 'no-op'

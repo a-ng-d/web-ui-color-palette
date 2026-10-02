@@ -47,7 +47,7 @@ function redirectTo(target: string) {
   }
 }
 
-const RootRedirect = redirectTo('/palettes')
+const DefaultRedirect = redirectTo('/palettes/local')
 const GenRedirect = redirectTo('/colors/gen')
 const ExtractRedirect = redirectTo('/colors/extract')
 const WheelRedirect = redirectTo('/colors/wheel')
@@ -99,10 +99,10 @@ export function App({ url }: { url?: string }) {
                   <Router>
                     <Route
                       path="/"
-                      component={RootRedirect}
+                      component={DefaultRedirect}
                     />
                     <Route
-                      path="/palettes"
+                      path="/palettes/:segment?"
                       component={ManagePage}
                     />
                     <Route
@@ -124,6 +124,10 @@ export function App({ url }: { url?: string }) {
                     <Route
                       path="/explore"
                       component={ExploreRedirect}
+                    />
+                    <Route
+                      default
+                      component={DefaultRedirect}
                     />
                   </Router>
                 </AppLayout>
