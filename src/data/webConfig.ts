@@ -197,7 +197,7 @@ const limitsMapping: { [key: string]: keyof typeof webConfig.limits } = {
   THEMES_ADD: 'colorThemes',
   PRESETS_CUSTOM_ADD: 'customStops',
   LOCAL_PALETTES: 'localPalettes',
-}  
+}
 
 webConfig.features.forEach((feature) => {
   const limitKey = limitsMapping[feature.name]

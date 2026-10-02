@@ -19,9 +19,7 @@ export const initExternals = (): void => {
   isInitialised = true
 
   if (webConfig.env.isMixpanelEnabled) {
-    const mixpanelUrl = import.meta.env.VITE_MIXPANEL_URL as
-      | string
-      | undefined
+    const mixpanelUrl = import.meta.env.VITE_MIXPANEL_URL as string | undefined
     const mixpanelToken = import.meta.env.VITE_MIXPANEL_TOKEN as
       | string
       | undefined

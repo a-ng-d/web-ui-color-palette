@@ -26,10 +26,7 @@ import {
 } from '@ui-lib/stores'
 import { validateUserLicenseKey } from '@ui-lib/external/license'
 import { checkAnnouncementsVersion } from '@ui-lib/external/cms'
-import {
-  getSupabase,
-  fetchUserEntitlements,
-} from '@ui-lib/external/auth'
+import { getSupabase, fetchUserEntitlements } from '@ui-lib/external/auth'
 import { useTolgee } from '@tolgee/react'
 import webConfig from './webConfig'
 import { restoreSession, signInWithOAuth, signOutWeb } from './webAuth'
