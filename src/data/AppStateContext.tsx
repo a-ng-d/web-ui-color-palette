@@ -27,6 +27,7 @@ import {
 import { validateUserLicenseKey } from '@ui-lib/external/license'
 import { checkAnnouncementsVersion } from '@ui-lib/external/cms'
 import { getSupabase, fetchUserEntitlements } from '@ui-lib/external/auth'
+import { resolveIsCompact, resolveIsMobile } from '@ui-lib/utils/isCompact'
 import { useTolgee } from '@tolgee/react'
 import webConfig from './webConfig'
 import { restoreSession, signInWithOAuth, signOutWeb } from './webAuth'
@@ -83,6 +84,8 @@ export type WebAppState = Pick<
   | 'creditsRenewalDate'
   | 'editor'
   | 'documentWidth'
+  | 'isCompact'
+  | 'isMobile'
   | 'service'
 > & {
   isAccountSubscribed: boolean
@@ -96,6 +99,9 @@ export type WebAppState = Pick<
   suggestedLanguage: Language | null
   isLoaded: boolean
 }
+
+const initialWidth =
+  typeof document !== 'undefined' ? document.documentElement.clientWidth : 1280
 
 const defaultAppState: WebAppState = {
   service: 'MANAGE' as Service,
@@ -117,10 +123,9 @@ const defaultAppState: WebAppState = {
   creditsCount: 0,
   creditsRenewalDate: 0,
   editor: 'web' as Editor,
-  documentWidth:
-    typeof document !== 'undefined'
-      ? document.documentElement.clientWidth
-      : 1280,
+  documentWidth: initialWidth,
+  isCompact: resolveIsCompact(initialWidth),
+  isMobile: resolveIsMobile(initialWidth),
   modalContext: 'EMPTY',
   mustUserConsent: false,
   announcements: {
@@ -174,8 +179,14 @@ export function AppStateProvider({
   )
 
   useEffect(() => {
-    const handleResize = () =>
-      setState({ documentWidth: document.documentElement.clientWidth })
+    const handleResize = () => {
+      const documentWidth = document.documentElement.clientWidth
+      setState({
+        documentWidth,
+        isCompact: resolveIsCompact(documentWidth),
+        isMobile: resolveIsMobile(documentWidth),
+      })
+    }
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)

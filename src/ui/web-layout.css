@@ -90,3 +90,7 @@
 .web-access-denied > * {
   max-width: 480px;
 }
+
+.pro-zone {
+  align-self: center;
+}

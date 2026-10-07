@@ -1,11 +1,10 @@
 import type { IconList } from '@unoff/ui'
 import { useLocation } from 'preact-iso'
-import { Bar, Button, Tabs } from '@unoff/ui'
+import { Bar, Button, layouts, Tabs } from '@unoff/ui'
 import { Shortcuts } from '@ui-lib/ui/modules'
 import { WithConfig, WithTranslation } from '@ui-lib/ui/components'
 import { useTranslate } from '@tolgee/react'
 import { useAppState } from '../data/AppStateContext'
-import { useCompactLayout } from './useCompactLayout'
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- HOC wrappers erase the wrapped component's prop types */
 const WrappedShortcuts = WithConfig(
@@ -16,7 +15,7 @@ const WrappedShortcuts = WithConfig(
 export function Sidebar() {
   const { path, route } = useLocation()
   const { state, setState, signIn, signOut, managePaletteRef } = useAppState()
-  const isCompact = useCompactLayout()
+  const isCompact = state.isMobile
   const { t } = useTranslate()
 
   const activeTab = path.startsWith('/colors')
@@ -50,16 +49,18 @@ export function Sidebar() {
           aria-label="Services"
         >
           {isCompact ? (
-            NAV_ITEMS.map(({ path: href, icon, label }) => (
-              <Button
-                key={href}
-                type="icon"
-                icon={icon}
-                state={href === activeTab ? 'selected' : 'default'}
-                helper={{ label }}
-                action={() => navigateTo(href)}
-              />
-            ))
+            <div className={layouts['stackbar--medium']}>
+              {NAV_ITEMS.map(({ path: href, icon, label }) => (
+                <Button
+                  key={href}
+                  type="icon"
+                  icon={icon}
+                  state={href === activeTab ? 'selected' : 'default'}
+                  helper={{ label }}
+                  action={() => navigateTo(href)}
+                />
+              ))}
+            </div>
           ) : (
             <Tabs
               direction="VERTICAL"
