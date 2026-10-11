@@ -74,18 +74,31 @@ const systemColorMode: 'yelbolt-uicp-light' | 'yelbolt-uicp-dark' =
     ? 'yelbolt-uicp-dark'
     : 'yelbolt-uicp-light'
 
-const getBrowserLang = (): Config['lang'] => {
-  const navigatorLang = navigator.language as Config['lang']
+const LANG_BY_BASE: Record<string, Config['lang']> = {
+  en: 'en-US',
+  fr: 'fr-FR',
+  es: 'es-ES',
+  pt: 'pt-BR',
+  ja: 'ja-JP',
+  ko: 'ko-KR',
+  zh: 'zh-Hans-CN',
+}
 
-  if (!navigator) return 'en-US'
-  else if (navigatorLang.includes('en')) return 'en-US'
-  else if (navigatorLang.includes('fr')) return 'fr-FR'
-  else if (navigatorLang.includes('es')) return 'es-ES'
-  else if (navigatorLang.includes('pt')) return 'pt-BR'
-  else if (navigatorLang.includes('ja')) return 'ja-JP'
-  else if (navigatorLang.includes('ko')) return 'ko-KR'
-  else if (navigatorLang.includes('zh')) return 'zh-Hans-CN'
-  return navigatorLang
+export const normalizeLang = (raw?: string | null): Config['lang'] => {
+  if (!raw) return 'en-US'
+
+  const exact = Object.values(LANG_BY_BASE).find(
+    (lang) => lang.toLowerCase() === raw.toLowerCase()
+  )
+  if (exact) return exact
+
+  return LANG_BY_BASE[raw.split(/[-_]/)[0].toLowerCase()] ?? 'en-US'
+}
+
+const getBrowserLang = (): Config['lang'] => {
+  if (typeof navigator === 'undefined') return 'en-US'
+
+  return normalizeLang(navigator.languages?.[0] ?? navigator.language)
 }
 
 const webConfig: Config = {

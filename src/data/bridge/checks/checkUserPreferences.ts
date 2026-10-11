@@ -1,5 +1,5 @@
 import { dispatch } from '../context'
-import webConfig from '../../webConfig'
+import webConfig, { normalizeLang } from '../../webConfig'
 
 const checkUserPreferences = async () => {
   const isWCAGDisplayed = window.localStorage.getItem('is_wcag_displayed')
@@ -41,8 +41,9 @@ const checkUserPreferences = async () => {
     window.localStorage.setItem('is_suggested_language_displayed', 'true')
   if (isOnboardingRead === null)
     window.localStorage.setItem('is_onboarding_read', 'false')
-  if (userLanguage === null)
-    window.localStorage.setItem('user_language', webConfig.lang)
+  const resolvedLanguage = normalizeLang(userLanguage ?? webConfig.lang)
+  if (userLanguage !== resolvedLanguage)
+    window.localStorage.setItem('user_language', resolvedLanguage)
   if (userTheme === null) window.localStorage.setItem('user_theme', 'system')
   if (palettesView === null)
     window.localStorage.setItem('palettes_view', 'MOSAIC')
@@ -71,7 +72,7 @@ const checkUserPreferences = async () => {
         ? true
         : isSuggestedLanguageDisplayed === 'true',
     isOnboardingRead: isOnboardingRead === 'true',
-    userLanguage: userLanguage ?? webConfig.lang,
+    userLanguage: resolvedLanguage,
     userTheme: userTheme ?? 'system',
     palettesView: palettesView ?? 'MOSAIC',
   })
