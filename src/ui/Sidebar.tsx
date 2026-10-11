@@ -35,7 +35,7 @@ export function Sidebar() {
 
   const NAV_ITEMS: Array<{ path: string; icon: IconList; label: string }> = [
     { path: '/palettes', icon: 'colors', label: t('services.manage') },
-    { path: '/colors', icon: 'styles', label: t('services.combine') },
+    { path: '/colors', icon: 'ai', label: t('services.combine') },
   ]
 
   return (
