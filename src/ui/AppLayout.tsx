@@ -2,6 +2,8 @@ import { useLocation } from 'preact-iso'
 import { useEffect, useRef } from 'preact/hooks'
 import { Icon, layouts, yelboltModes } from '@unoff/ui'
 import { useTranslate } from '@tolgee/react'
+import { useStore } from '@nanostores/preact'
+import { $palette } from '@ui-lib/stores'
 import '@ui-lib/ui/stylesheets/app.css'
 import './web-layout.css'
 import { useAppState } from '../data/AppStateContext'
@@ -52,11 +54,15 @@ function useServiceSync() {
   const { state, setState } = useAppState()
   const previousService = useRef(state.service)
   const { t } = useTranslate()
+  const { id, name } = useStore($palette) as { id?: string; name?: string }
+  const isPaletteOpen = path.startsWith('/palettes/') && !!id
+  const paletteName = isPaletteOpen ? (name?.trim() ?? '') : ''
 
   useEffect(() => {
     const key = TITLE_KEY_BY_PATH[getServiceKey(path)]
-    document.title = key ? `${t(key)} – ${SITE_NAME}` : SITE_NAME
-  }, [path, t])
+    const title = isPaletteOpen ? paletteName : key ? t(key) : ''
+    document.title = title ? `${title} – ${SITE_NAME}` : SITE_NAME
+  }, [path, t, isPaletteOpen, paletteName])
 
   useEffect(() => {
     setState({ service: SERVICE_BY_PATH[getServiceKey(path)] ?? 'MANAGE' })

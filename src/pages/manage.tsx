@@ -38,8 +38,12 @@ export default function ManagePage() {
   const [isAccessDenied, setIsAccessDenied] = useState(false)
 
   const lastResolved = useRef<string | null>(null)
+  const previousSegment = useRef<string | null>(null)
 
   useEffect(() => {
+    const hasSegmentChanged = previousSegment.current !== segment
+    previousSegment.current = segment
+
     if (!segment) {
       route(DEFAULT_PATH, true)
       return
@@ -47,7 +51,8 @@ export default function ManagePage() {
     if (isBrowseSlug) {
       lastResolved.current = null
       setIsAccessDenied(false)
-      if ($palette.get().id) managePaletteRef.current?.onResetPalette()
+      if (hasSegmentChanged && $palette.get().id)
+        managePaletteRef.current?.onResetPalette()
       return
     }
     if (segment === $palette.get().id) return
