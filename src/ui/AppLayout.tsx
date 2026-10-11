@@ -1,13 +1,6 @@
 import { useLocation } from 'preact-iso'
 import { useEffect, useRef } from 'preact/hooks'
-import {
-  commons,
-  Icon,
-  layouts,
-  yelboltColors,
-  yelboltModes,
-  yelboltTypes,
-} from '@unoff/ui'
+import { Icon, layouts, yelboltModes } from '@unoff/ui'
 import { useTranslate } from '@tolgee/react'
 import '@ui-lib/ui/stylesheets/app.css'
 import './web-layout.css'
@@ -23,7 +16,7 @@ import type { Service } from '@ui-lib/types'
 if (typeof window !== 'undefined')
   (
     window as unknown as { __unoffThemeTokens: Record<string, unknown> }
-  ).__unoffThemeTokens = { commons, yelboltColors, yelboltModes, yelboltTypes }
+  ).__unoffThemeTokens = { yelboltModes }
 
 interface AppLayoutProps {
   children?: ComponentChildren

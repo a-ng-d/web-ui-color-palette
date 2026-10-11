@@ -2,8 +2,22 @@ import path from 'node:path'
 import { defineConfig } from 'vite'
 import preact from '@preact/preset-vite'
 
+const onlyYelboltTokens = () => ({
+  name: 'only-yelbolt-tokens',
+  enforce: 'pre' as const,
+  apply: 'serve' as const,
+  load(id: string) {
+    if (
+      /@unoff\/ui\/dist\/assets\/styles\/tokens\/modules\/(figma|penpot|sketch|framer)-[a-z]+\.css/.test(
+        id.split('?')[0]
+      )
+    )
+      return ''
+  },
+})
+
 export default defineConfig({
-  plugins: [preact()],
+  plugins: [onlyYelboltTokens(), preact()],
 
   define: {
     __PLATFORM__: JSON.stringify('web'),
