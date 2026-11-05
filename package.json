@@ -18,6 +18,7 @@
     "packages/ui-ui-color-palette"
   ],
   "scripts": {
+    "release": "node packages/ui-ui-color-palette/scripts/release.mjs",
     "dev": "vite",
     "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist/server",
     "start": "node --import tsx/esm server.ts",
