@@ -34,6 +34,7 @@ function lazyRoute<T extends Record<string, unknown>>(
 
 const ManagePage = lazyRoute(() => import('./pages/manage'))
 const CombinePage = lazyRoute(() => import('./pages/combine'))
+const StartPage = lazyRoute(() => import('./pages/start'))
 
 function redirectTo(target: string) {
   return function Redirect() {
@@ -124,6 +125,10 @@ export function App({ url }: { url?: string }) {
                     <Route
                       path="/explore"
                       component={ExploreRedirect}
+                    />
+                    <Route
+                      path="/start"
+                      component={StartPage}
                     />
                     <Route
                       default
