@@ -1,4 +1,7 @@
-import { Data as PaletteData, normalizeShift } from '@yelbolt/engine-ui-color-palette'
+import {
+  Data as PaletteData,
+  normalizeShift,
+} from '@yelbolt/engine-ui-color-palette'
 import { getPalette, setPalette } from '../db'
 import { dispatch, t } from '../context'
 import type {
