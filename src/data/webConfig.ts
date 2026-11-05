@@ -38,6 +38,8 @@ const webProFeatures = [
   'PRESETS_OPEN_COLOR',
   'PRESETS_SPECTRUM',
   'PRESETS_SPECTRUM_NEUTRAL',
+  'PRESETS_SPECTRUM_2',
+  'PRESETS_SPECTRUM_2_NEUTRAL',
   'PRESETS_ADS',
   'PRESETS_ADS_NEUTRAL',
   'PRESETS_CARBON',
@@ -123,6 +125,7 @@ const webConfig: Config = {
     sourceColors: 5,
     customStops: 6,
     colorThemes: 2,
+    localPalettes: 2,
   },
   env: {
     platform: 'yelbolt' as const,
