@@ -88,7 +88,6 @@ export function App({ url }: { url?: string }) {
           versions={webConfig.versions}
           features={webConfig.features}
           lang={webConfig.lang}
-          fees={webConfig.fees}
         >
           <ThemeProvider
             theme={webConfig.env.ui}

@@ -98,9 +98,6 @@ export default function StartPage() {
         },
       } as Parameters<typeof createPalette>[0])
 
-      if (webConfig.plan.isProEnabled && webConfig.plan.isCreditsEnabled)
-        $creditsCount.set($creditsCount.get() - webConfig.fees.paletteCreate)
-
       trackActionEvent(
         webConfig.env.isMixpanelEnabled,
         state.userSession.userId,
