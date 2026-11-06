@@ -76,6 +76,14 @@ export default function ManagePage() {
 
   useSyncPaletteUrl()
 
+  useEffect(
+    () => () => {
+      if ($palette.get().id) managePaletteRef.current?.onResetPalette()
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+
   if (!segment) return null
 
   return (

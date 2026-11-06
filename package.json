@@ -1,6 +1,6 @@
 {
   "name": "web-ui-color-palette",
-  "version": "5.3.6",
+  "version": "5.3.7",
   "private": true,
   "description": "UI Color Palette is an app that creates, manages, exports, and publishes consistent and accessible color palettes.",
   "author": "Aurélien Grimaud",
@@ -18,6 +18,7 @@
     "packages/ui-ui-color-palette"
   ],
   "scripts": {
+    "release": "node packages/ui-ui-color-palette/scripts/release.mjs",
     "dev": "vite",
     "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist/server",
     "start": "node --import tsx/esm server.ts",

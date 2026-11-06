@@ -24,6 +24,7 @@ import {
   $userTheme,
   updateUserConsentWithData,
 } from '@ui-lib/stores'
+import { trackEditorEvent } from '@ui-lib/external/tracking'
 import { validateUserLicenseKey } from '@ui-lib/external/license'
 import { checkAnnouncementsVersion } from '@ui-lib/external/cms'
 import { getSupabase, fetchUserEntitlements } from '@ui-lib/external/auth'
@@ -171,6 +172,9 @@ export function AppStateProvider({
   const [state, setStateFull] = useState<WebAppState>(defaultAppState)
   const managePaletteRef = useRef<ManagePalette>(null)
   const tolgee = useTolgee()
+  const stateRef = useRef(state)
+  stateRef.current = state
+  const hasTrackedEditor = useRef(false)
 
   const setState = useCallback(
     (partial: Partial<WebAppState>) =>
@@ -191,6 +195,25 @@ export function AppStateProvider({
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [setState])
+
+  useEffect(() => {
+    if (!state.isLoaded || state.mustUserConsent || hasTrackedEditor.current)
+      return
+    const timer = setTimeout(() => {
+      if (hasTrackedEditor.current) return
+      hasTrackedEditor.current = true
+      const current = stateRef.current
+      trackEditorEvent(
+        webConfig.env.isMixpanelEnabled,
+        current.userSession.userId,
+        current.userIdentity.id,
+        current.planStatus,
+        current.userConsent.find((consent) => consent.id === 'mixpanel')
+          ?.isConsented ?? false
+      )
+    }, 1000)
+    return () => clearTimeout(timer)
+  }, [state.isLoaded, state.mustUserConsent])
 
   useEffect(() => {
     const handler = (event: CustomEvent) => {
