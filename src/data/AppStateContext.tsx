@@ -8,6 +8,7 @@ import {
 } from 'preact/hooks'
 import { createContext } from 'preact'
 import isValidPaletteConfiguration from '@ui-lib/utils/isValidPaletteConfiguration'
+import { resolveIsCompact, resolveIsMobile } from '@ui-lib/utils/isCompact'
 import {
   $canStylesDeepSync,
   $canTokensDeepSync,
@@ -28,7 +29,6 @@ import { trackEditorEvent } from '@ui-lib/external/tracking'
 import { validateUserLicenseKey } from '@ui-lib/external/license'
 import { checkAnnouncementsVersion } from '@ui-lib/external/cms'
 import { getSupabase, fetchUserEntitlements } from '@ui-lib/external/auth'
-import { resolveIsCompact, resolveIsMobile } from '@ui-lib/utils/isCompact'
 import { useTolgee } from '@tolgee/react'
 import webConfig from './webConfig'
 import { restoreSession, signInWithOAuth, signOutWeb } from './webAuth'

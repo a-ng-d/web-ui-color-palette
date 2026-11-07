@@ -187,7 +187,18 @@ const handleBridgeMessage = async (path: any) => {
 
     // Navigation
     OPEN_IN_BROWSER: () => {
-      window.open(path.data.url, '_blank')
+      if (window.open(path.data.url, '_blank')) return
+
+      dispatch('POST_MESSAGE', {
+        type: 'WARNING',
+        message: 'The browser blocked the window. Click anywhere to open it.',
+      })
+
+      window.document.addEventListener(
+        'click',
+        () => window.open(path.data.url, '_blank'),
+        { once: true }
+      )
     },
 
     // Palette CRUD
