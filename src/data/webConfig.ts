@@ -1,6 +1,8 @@
 import { doSpecificMode } from '@ui-lib/stores'
 import type { Config } from '@ui-lib/types'
 
+declare const __APP_VERSION__: string
+
 const webInactiveFeatures = [
   'LOCAL_PALETTES_FILE',
   'IMPORTS_CANVAS',
@@ -217,8 +219,8 @@ const webConfig: Config = {
     trialVersion: '2024.04',
     algorithmVersion: 'v3',
     paletteVersion: '2025.06',
-    pluginVersion: import.meta.env.VITE_APP_VERSION ?? '0.0.0',
-    creditsVersion: '2026.05',
+    pluginVersion: __APP_VERSION__,
+    creditsVersion: '2026.11',
   },
   features: doSpecificMode(webInactiveFeatures, webProFeatures, []),
   lang: getBrowserLang(),
