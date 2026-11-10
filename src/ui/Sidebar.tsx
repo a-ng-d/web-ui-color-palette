@@ -1,9 +1,14 @@
 import type { IconList } from '@unoff/ui'
 import { useLocation } from 'preact-iso'
+import { useEffect, useState } from 'preact/hooks'
 import { Bar, Button, layouts, Tabs } from '@unoff/ui'
+import { getPricingPlans } from '@ui-lib/utils/pricingPlans'
 import { Shortcuts } from '@ui-lib/ui/modules'
 import { WithConfig, WithTranslation } from '@ui-lib/ui/components'
+import { $offers, getFeaturedOffer } from '@ui-lib/stores/offers'
 import { useTranslate } from '@tolgee/react'
+import { useStore } from '@nanostores/preact'
+import webConfig from '../data/webConfig'
 import { useAppState } from '../data/AppStateContext'
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- HOC wrappers erase the wrapped component's prop types */
@@ -17,6 +22,37 @@ export function Sidebar() {
   const { state, setState, signIn, signOut, managePaletteRef } = useAppState()
   const isCompact = state.isMobile
   const { t } = useTranslate()
+  const offers = useStore($offers)
+  const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    const nextBoundary = offers
+      .flatMap((offer) => [offer.startsAt, offer.endsAt])
+      .map((date) => (date ? Date.parse(date) : NaN))
+      .filter((time) => time > now)
+      .sort((a, b) => a - b)[0]
+    if (nextBoundary === undefined) return
+    const timer = setTimeout(
+      () => setNow(Date.now()),
+      Math.min(nextBoundary - Date.now() + 1000, 2 ** 31 - 1)
+    )
+    return () => clearTimeout(timer)
+  }, [offers, now])
+
+  const offer =
+    state.planStatus === 'UNPAID'
+      ? getFeaturedOffer(
+          offers,
+          getPricingPlans(
+            state.planStatus,
+            webConfig,
+            state.service,
+            state.editor
+          ).map((plan) => plan.productId),
+          now
+        )
+      : undefined
+  const tag = offer ? (offer.discountCode ?? offer.eventName) : 'beta'
 
   const activeTab = path.startsWith('/colors')
     ? '/colors'
@@ -86,7 +122,7 @@ export function Sidebar() {
             {...state}
             announcements={{ version: '', status: 'NO_ANNOUNCEMENTS' }}
             orientation="VERTICAL"
-            tag="beta"
+            tag={tag}
             onSignIn={signIn}
             onSignOut={signOut}
             onReOpenAnnouncements={setState}
