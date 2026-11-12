@@ -53,7 +53,7 @@ export function Sidebar() {
         )
       : undefined
   const tag = offer
-    ? `${offer.discountCode ?? offer.eventName} · −${offer.percentOff}%`
+    ? `${offer.discountCode ?? offer.eventName} → −${offer.percentOff}%`
     : 'beta'
 
   const activeTab = path.startsWith('/colors')
