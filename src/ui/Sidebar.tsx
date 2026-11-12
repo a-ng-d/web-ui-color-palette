@@ -52,7 +52,9 @@ export function Sidebar() {
           now
         )
       : undefined
-  const tag = offer ? (offer.discountCode ?? offer.eventName) : 'beta'
+  const tag = offer
+    ? `${offer.discountCode ?? offer.eventName} · −${offer.percentOff}%`
+    : 'beta'
 
   const activeTab = path.startsWith('/colors')
     ? '/colors'
