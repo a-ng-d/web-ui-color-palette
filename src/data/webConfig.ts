@@ -19,6 +19,7 @@ const webInactiveFeatures = [
   'USER_PREFERENCES_SYNC_DEEP_TOKENS',
   'HELP_CHAT',
   'RESIZE_UI',
+  'PRICING_ULTIMATE',
 ]
 
 const webProFeatures = [
