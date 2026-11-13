@@ -1,4 +1,6 @@
 import mixpanel from 'mixpanel-browser'
+import { $offers } from '@ui-lib/stores/offers'
+import getOffers from '@ui-lib/external/transactional/getOffers'
 import { initPolar } from '@ui-lib/external/transactional'
 import {
   initMixpanel,
@@ -142,13 +144,21 @@ export const initExternals = (): void => {
       | string
       | undefined
 
-    if (polarAccessToken && webConfig.urls.databaseUrl)
+    if (polarAccessToken && webConfig.urls.databaseUrl) {
       initPolar(
         polarAccessToken,
         `${webConfig.urls.databaseUrl}/functions/v1`,
         webConfig.env.isDev ? 'sandbox' : 'production'
       )
-    else
+      getOffers([
+        webConfig.plan.storeProWeekId,
+        webConfig.plan.storeProMonthId,
+        webConfig.plan.storeProYearId,
+        webConfig.plan.storeProLifetimeId,
+      ])
+        .then((offers) => $offers.set(offers))
+        .catch(() => undefined)
+    } else
       console.warn(
         '[externals] Polar is enabled but VITE_POLAR_ACCESS_TOKEN or ' +
           'VITE_SUPABASE_URL is missing — checkout will be unavailable.'

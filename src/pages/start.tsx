@@ -1,20 +1,20 @@
+import { uid } from 'uid'
 import { useLocation } from 'preact-iso'
 import { useEffect, useRef } from 'preact/hooks'
 import chroma from 'chroma-js'
-import { uid } from 'uid'
 import { makeDefaultShift } from '@yelbolt/engine-ui-color-palette'
 import { doScale, FeatureStatus } from '@unoff/utils'
-import { $creditsCount, getDefaultPreset, getPresets } from '@ui-lib/stores'
-import { getClosestColorName } from '@ui-lib/utils/colorNameHelper'
 import isValidPaletteConfiguration from '@ui-lib/utils/isValidPaletteConfiguration'
+import { getClosestColorName } from '@ui-lib/utils/colorNameHelper'
+import { getDefaultPreset, getPresets } from '@ui-lib/stores'
 import { trackActionEvent } from '@ui-lib/external/tracking'
 import { useTranslate } from '@tolgee/react'
 import webConfig from '../data/webConfig'
-import createPalette from '../data/bridge/creations/createPalette'
 import { getAllPalettes } from '../data/bridge/db'
+import createPalette from '../data/bridge/creations/createPalette'
 import { useAppState } from '../data/AppStateContext'
-import type { Service } from '@ui-lib/types'
 import type { SourceColorConfiguration } from '@yelbolt/engine-ui-color-palette'
+import type { Service } from '@ui-lib/types'
 
 const FALLBACK_PATH = '/palettes/local'
 
@@ -97,9 +97,6 @@ export default function StartPage() {
           },
         },
       } as Parameters<typeof createPalette>[0])
-
-      if (webConfig.plan.isProEnabled && webConfig.plan.isCreditsEnabled)
-        $creditsCount.set($creditsCount.get() - webConfig.fees.paletteCreate)
 
       trackActionEvent(
         webConfig.env.isMixpanelEnabled,
