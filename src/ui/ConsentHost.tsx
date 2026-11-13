@@ -1,6 +1,7 @@
 import type { ConsentConfiguration } from '@unoff/ui'
 import { createPortal } from 'preact/compat'
 import { Consent } from '@unoff/ui'
+import { trackUserConsentEvent } from '@ui-lib/external/tracking'
 import { useTranslate } from '@tolgee/react'
 import webConfig from '../data/webConfig'
 import { useAppState } from '../data/AppStateContext'
@@ -27,6 +28,12 @@ export function ConsentHost() {
         `${item.id}_user_consent`,
         String(item.isConsented)
       )
+    )
+
+    trackUserConsentEvent(
+      webConfig.env.isMixpanelEnabled,
+      webConfig.versions.userConsentVersion,
+      consent
     )
   }
 

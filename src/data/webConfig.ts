@@ -1,6 +1,8 @@
 import { doSpecificMode } from '@ui-lib/stores'
 import type { Config } from '@ui-lib/types'
 
+declare const __APP_VERSION__: string
+
 const webInactiveFeatures = [
   'LOCAL_PALETTES_FILE',
   'IMPORTS_CANVAS',
@@ -17,6 +19,7 @@ const webInactiveFeatures = [
   'USER_PREFERENCES_SYNC_DEEP_TOKENS',
   'HELP_CHAT',
   'RESIZE_UI',
+  'PRICING_ULTIMATE',
 ]
 
 const webProFeatures = [
@@ -38,6 +41,8 @@ const webProFeatures = [
   'PRESETS_OPEN_COLOR',
   'PRESETS_SPECTRUM',
   'PRESETS_SPECTRUM_NEUTRAL',
+  'PRESETS_SPECTRUM_2',
+  'PRESETS_SPECTRUM_2_NEUTRAL',
   'PRESETS_ADS',
   'PRESETS_ADS_NEUTRAL',
   'PRESETS_CARBON',
@@ -121,8 +126,9 @@ const webConfig: Config = {
     minWidth: 280,
     minHeight: 400,
     sourceColors: 5,
-    customStops: 6,
+    customStops: 8,
     colorThemes: 2,
+    localPalettes: 3,
   },
   env: {
     platform: 'yelbolt' as const,
@@ -153,8 +159,22 @@ const webConfig: Config = {
     isCreditsEnabled: import.meta.env.VITE_CREDITS_ENABLED === 'true',
     trialTime: 72,
     creditsLimit: 500,
-    creditsRenewalPeriodDays: 7,
-    creditsRenewalPeriodHours: 168,
+    creditsRenewalPeriodDays: 30,
+    creditsRenewalPeriodHours: 720,
+    creditsRenewalPeriodMonths: 1,
+    meters: {
+      localStylesSync: { units: { style: 2 } },
+      localVariablesSync: { units: { variable: 4 } },
+      localTokensSync: { units: { token: 4 } },
+      documentPalette: { units: { color: 4 } },
+      documentPaletteWithProperties: { units: { color: 6 } },
+      documentSheet: { units: { color: 8 } },
+      paletteSimulate: { units: { layer: 2 } },
+      aiColorsGenerate: {
+        units: {},
+        tokens: { tokensPerCredit: 40, outputTokenWeight: 4 },
+      },
+    },
     storeProWeekId: '17eb1281-cf21-4d58-9144-76a1426ec73c',
     storeProMonthId: '1c4ad049-f424-4ec4-ac66-0997050e0060',
     storeProYearId: '87a83311-cba6-424f-a72f-84a1785a1079',
@@ -200,27 +220,11 @@ const webConfig: Config = {
     trialVersion: '2024.04',
     algorithmVersion: 'v3',
     paletteVersion: '2025.06',
-    pluginVersion: import.meta.env.VITE_APP_VERSION ?? '0.0.0',
-    creditsVersion: '2026.05',
+    pluginVersion: __APP_VERSION__,
+    creditsVersion: '2026.11',
   },
   features: doSpecificMode(webInactiveFeatures, webProFeatures, []),
   lang: getBrowserLang(),
-  fees: {
-    colourLoversImport: 25,
-    coolorsImport: 25,
-    realtimeColorsImport: 25,
-    imageColorsExtract: 50,
-    harmonyCreate: 50,
-    aiColorsGenerate: 50,
-    paletteCreate: 100,
-    paletteGenerate: 200,
-    paletteWithPropsGenerate: 200,
-    sheetGenerate: 200,
-    paletteUpdates: 100,
-    localStylesSync: 300,
-    localVariablesSync: 300,
-    localTokensSync: 300,
-  },
 }
 
 const limitsMapping: { [key: string]: keyof typeof webConfig.limits } = {

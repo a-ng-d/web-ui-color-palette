@@ -7,10 +7,16 @@ export function useSyncPaletteUrl() {
   const { path, route } = useLocation()
   const id = useStore($palette).id as string
   const prevId = useRef<string>('')
+  const isFirstRun = useRef(true)
 
   useEffect(() => {
     const hadId = prevId.current
     prevId.current = id
+
+    if (isFirstRun.current) {
+      isFirstRun.current = false
+      return
+    }
 
     if (!id) {
       if (!hadId) return

@@ -8,9 +8,9 @@ import {
   yelboltModes,
   yelboltTypes,
 } from '@unoff/ui'
+import { $palette } from '@ui-lib/stores'
 import { useTranslate } from '@tolgee/react'
 import { useStore } from '@nanostores/preact'
-import { $palette } from '@ui-lib/stores'
 import '@ui-lib/ui/stylesheets/app.css'
 import './web-layout.css'
 import { useAppState } from '../data/AppStateContext'
